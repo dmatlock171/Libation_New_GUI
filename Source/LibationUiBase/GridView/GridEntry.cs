@@ -45,6 +45,10 @@ public abstract class GridEntry : ReactiveObject
 	public string? Title { get => field; private set => RaiseAndSetIfChanged(ref field, value); }
 	public string? Authors { get => field; private set => RaiseAndSetIfChanged(ref field, value); }
 	public string? Narrators { get => field; private set => RaiseAndSetIfChanged(ref field, value); }
+	/// <summary> <see cref="Authors"/> rendered surname-first, for sorting by last name. </summary>
+	public string? AuthorsSurnameFirst { get => field; private set => RaiseAndSetIfChanged(ref field, value); }
+	/// <summary> <see cref="Narrators"/> rendered surname-first, for sorting by last name. </summary>
+	public string? NarratorsSurnameFirst { get => field; private set => RaiseAndSetIfChanged(ref field, value); }
 	public string? Category { get => field; private set => RaiseAndSetIfChanged(ref field, value); }
 	public string? Misc { get => field; private set => RaiseAndSetIfChanged(ref field, value); }
 	public string? Description { get => field; private set => RaiseAndSetIfChanged(ref field, value); }
@@ -104,6 +108,8 @@ public abstract class GridEntry : ReactiveObject
 		ProductRating = Book.Rating ?? new Rating(0, 0, 0);
 		Authors = Book.AuthorNames;
 		Narrators = Book.NarratorNames;
+		AuthorsSurnameFirst = NameFormatter.ToSurnameFirst(Book.AuthorNames);
+		NarratorsSurnameFirst = NameFormatter.ToSurnameFirst(Book.NarratorNames);
 		Category = string.Join(", ", Book.LowestCategoryNames());
 		Misc = GetMiscDisplay(libraryBook);
 		LastDownload = new(Book.UserDefinedItem);
@@ -196,6 +202,8 @@ public abstract class GridEntry : ReactiveObject
 		nameof(ProductRating) => Book.Rating,
 		nameof(Authors) => Authors,
 		nameof(Narrators) => Narrators,
+		nameof(AuthorsSurnameFirst) => AuthorsSurnameFirst,
+		nameof(NarratorsSurnameFirst) => NarratorsSurnameFirst,
 		nameof(Description) => Description,
 		nameof(Category) => Category,
 		nameof(Misc) => Misc,

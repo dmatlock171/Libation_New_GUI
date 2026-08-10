@@ -102,11 +102,12 @@
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
 
-				<controls:DataGridTemplateColumnExt CanUserResize="False" CanUserSort="True" Header="Liberate" SortMemberPath="Liberate">
+				<controls:DataGridTemplateColumnExt CanUserResize="False" CanUserSort="True" Header="Status" SortMemberPath="Liberate">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate x:DataType="uibase:GridEntry">
 							<views:LiberateStatusButton
 								ToolTip.Tip="{Binding Liberate.ToolTip}"
+								AutomationProperties.Name="{Binding Liberate.ToolTip}"
 								BookStatus="{Binding Liberate.BookStatus}"
 								PdfStatus="{Binding Liberate.PdfStatus}"
 								IsUnavailable="{Binding Liberate.IsUnavailable}"
@@ -167,6 +168,32 @@
 					</DataGridTemplateColumn.CellTemplate>
 					<controls:DataGridTemplateColumnExt.ClipboardContentBinding>
 						<Binding x:DataType="uibase:GridEntry" Path="Narrators" />
+					</controls:DataGridTemplateColumnExt.ClipboardContentBinding>
+				</controls:DataGridTemplateColumnExt>
+
+				<controls:DataGridTemplateColumnExt Header="Authors&#xA;(last name)" MinWidth="10" CanUserSort="True" SortMemberPath="AuthorsSurnameFirst">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate x:DataType="uibase:GridEntry">
+							<Panel Opacity="{Binding Liberate.Opacity}">
+								<TextBlock Text="{Binding AuthorsSurnameFirst}" />
+							</Panel>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+					<controls:DataGridTemplateColumnExt.ClipboardContentBinding>
+						<Binding x:DataType="uibase:GridEntry" Path="AuthorsSurnameFirst" />
+					</controls:DataGridTemplateColumnExt.ClipboardContentBinding>
+				</controls:DataGridTemplateColumnExt>
+
+				<controls:DataGridTemplateColumnExt Header="Narrators&#xA;(last name)" MinWidth="10" CanUserSort="True" SortMemberPath="NarratorsSurnameFirst">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate x:DataType="uibase:GridEntry">
+							<Panel Opacity="{Binding Liberate.Opacity}">
+								<TextBlock Text="{Binding NarratorsSurnameFirst}" />
+							</Panel>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+					<controls:DataGridTemplateColumnExt.ClipboardContentBinding>
+						<Binding x:DataType="uibase:GridEntry" Path="NarratorsSurnameFirst" />
 					</controls:DataGridTemplateColumnExt.ClipboardContentBinding>
 				</controls:DataGridTemplateColumnExt>
 

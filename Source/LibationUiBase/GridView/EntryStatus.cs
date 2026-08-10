@@ -130,27 +130,27 @@ public class EntryStatus : ReactiveObject, IComparable
 	private string GetTooltip()
 	{
 		if (IsSeries)
-			return Expanded ? "Click to Collapse" : "Click to Expand";
+			return Expanded ? "Click to collapse" : "Click to expand";
 
 		if (IsUnavailable)
-			return "This book cannot be downloaded\nbecause it wasn't found during\nthe most recent library scan";
+			return "This book can't be downloaded\r\nbecause it wasn't found during\r\nthe most recent library scan";
 
 		if (BookStatus == LiberatedStatus.Error)
-			return "Book downloaded ERROR";
+			return "Download failed";
 
 		string libState = BookStatus switch
 		{
-			LiberatedStatus.Liberated => "Liberated",
-			LiberatedStatus.PartialDownload => "File has been at least\r\npartially downloaded",
-			LiberatedStatus.NotLiberated => "Book NOT downloaded",
+			LiberatedStatus.Liberated => "Downloaded",
+			LiberatedStatus.PartialDownload => "Partially downloaded",
+			LiberatedStatus.NotLiberated => "Not downloaded",
 			_ => throw new Exception("Unexpected liberation state")
 		};
 
 		string pdfState = PdfStatus switch
 		{
-			LiberatedStatus.Liberated => "\r\nPDF downloaded",
-			LiberatedStatus.NotLiberated => "\r\nPDF NOT downloaded",
-			LiberatedStatus.Error => "\r\nPDF downloaded ERROR",
+			LiberatedStatus.Liberated => "\r\nPDF: downloaded",
+			LiberatedStatus.NotLiberated => "\r\nPDF: not downloaded",
+			LiberatedStatus.Error => "\r\nPDF: download failed",
 			null => "",
 			_ => throw new Exception("Unexpected PDF state")
 		};
@@ -160,7 +160,7 @@ public class EntryStatus : ReactiveObject, IComparable
 		if (BookStatus == LiberatedStatus.NotLiberated ||
 			BookStatus == LiberatedStatus.PartialDownload ||
 			PdfStatus == LiberatedStatus.NotLiberated)
-			mouseoverText += "\r\nClick to complete";
+			mouseoverText += "\r\nClick to download";
 
 		return mouseoverText;
 	}

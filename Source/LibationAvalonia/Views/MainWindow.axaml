@@ -25,7 +25,7 @@
 					<NativeMenuItemSeparator />
 				</NativeMenu>
 			</NativeMenuItem>
-			<NativeMenuItem Header="Liberate">
+			<NativeMenuItem Header="Download">
 				<NativeMenu>
 					<NativeMenuItem Command="{Binding BackupAllBooks}" Header="{Binding BookBackupsToolStripText}" Gesture="{OnPlatform macOS='alt+⌘+B'}" />
 					<NativeMenuItem Command="{Binding BackupAllPdfs}" Header="{Binding PdfBackupsToolStripText}"  Gesture="{OnPlatform macOS='alt+⌘+P'}"/>
@@ -89,7 +89,7 @@
 
 				<!-- Import Menu -->
 					
-				<MenuItem Name="importToolStripMenuItem" Header="_Import">
+				<MenuItem Name="importToolStripMenuItem" Header="_Library">
 					<MenuItem IsVisible="{Binding AnyAccounts}" Command="{Binding ToggleAutoScan}" Header="A_uto Scan Library">
 						<MenuItem.Icon>
 							<CheckBox BorderThickness="0" IsChecked="{Binding AutoScanChecked, Mode=TwoWay}" IsHitTestVisible="False" />
@@ -112,37 +112,34 @@
 					<Separator />
 					<MenuItem Command="{Binding LocateAudiobooksAsync}" Header="L_ocate Audiobooks..." ToolTip.Tip="{Binding LocateAudiobooksTip}" />
 
-				</MenuItem>
-					
-				<!-- Liberate Menu -->
+					<Separator />
+					<MenuItem IsEnabled="{Binding LibraryStats?.HasBookResults, TargetNullValue=false}" Command="{Binding ExportLibraryAsync}" Header="E_xport Library..." InputGesture="ctrl+S" />
 
-				<MenuItem Header="_Liberate">
+				</MenuItem>
+
+				<!-- Download Menu -->
+
+				<MenuItem Header="_Download">
 					<MenuItem Command="{Binding BackupAllBooks}" Header="{Binding BookBackupsToolStripText}" />
 					<MenuItem Command="{Binding BackupAllPdfs}" Header="{Binding PdfBackupsToolStripText}" />
 					<MenuItem Command="{Binding ConvertAllToMp3Async}" Header="Convert all _M4b to Mp3 [Long-running]..." />
+					<Separator />
 					<MenuItem Command="{Binding LiberateVisible}" Header="{Binding LiberateVisibleToolStripText}" IsEnabled="{Binding AnyVisibleNotLiberated}" />
 				</MenuItem>
 
-				<!-- Export Menu -->
+				<!-- View Menu -->
 
-				<MenuItem Header="E_xport">
-					<!-- Remove height style property for menu item -->
-					<MenuItem IsEnabled="{Binding LibraryStats?.HasBookResults, TargetNullValue=false}" Command="{Binding ExportLibraryAsync}" Header="E_xport Library" InputGesture="ctrl+S" />
-				</MenuItem>
-
-				<!-- Quick Filters Menu -->
-
-				<MenuItem Name="quickFiltersToolStripMenuItem" Header="Quick _Filters" ItemsSource="{Binding QuickFilterMenuItems}" />
-
-				<!-- Visible Books Menu -->
-
-				<MenuItem Header="{Binding VisibleCountMenuItemText}" >
-					<MenuItem Command="{Binding LiberateVisible}" Header="{Binding LiberateVisibleToolStripText_2}" IsEnabled="{Binding AnyVisibleNotLiberated}" />
-					<MenuItem Command="{Binding ReplaceTagsAsync}" Header="Replace _Tags..." />
-					<MenuItem Command="{Binding SetBookDownloadedAsync}" Header="Set book '_Downloaded' status manually..." />
-					<MenuItem Command="{Binding SetPdfDownloadedAsync}" Header="Set _PDF 'Downloaded' status manually..." />
-					<MenuItem Command="{Binding SetDownloadedAutoAsync}" Header="Set '_Downloaded' status automatically..." />
-					<MenuItem Command="{Binding RemoveVisibleAsync}" Header="_Remove from library..." />
+				<MenuItem Header="_View">
+					<MenuItem Name="quickFiltersToolStripMenuItem" Header="Quick _Filters" ItemsSource="{Binding QuickFilterMenuItems}" />
+					<Separator />
+					<MenuItem Header="{Binding VisibleCountMenuItemText}" >
+						<MenuItem Command="{Binding LiberateVisible}" Header="{Binding LiberateVisibleToolStripText_2}" IsEnabled="{Binding AnyVisibleNotLiberated}" />
+						<MenuItem Command="{Binding ReplaceTagsAsync}" Header="Replace _Tags..." />
+						<MenuItem Command="{Binding SetBookDownloadedAsync}" Header="Set book '_Downloaded' status manually..." />
+						<MenuItem Command="{Binding SetPdfDownloadedAsync}" Header="Set _PDF 'Downloaded' status manually..." />
+						<MenuItem Command="{Binding SetDownloadedAutoAsync}" Header="Set '_Downloaded' status automatically..." />
+						<MenuItem Command="{Binding RemoveVisibleAsync}" Header="_Remove from library..." />
+					</MenuItem>
 				</MenuItem>
 
 				<!-- Settings Menu -->
@@ -219,6 +216,29 @@
 
 			<StackPanel Grid.Column="2" Height="30" Orientation="Horizontal">
 				<Button Name="filterBtn" IsVisible="{Binding !RemoveButtonsVisible}" Command="{Binding FilterBtn}" CommandParameter="{Binding #filterSearchTb.Text}" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="Filter"/>
+				<Button
+					Padding="10,4"
+					VerticalAlignment="Stretch"
+					Command="{Binding DecreaseGridFontSize}"
+					ToolTip.Tip="Smaller grid text"
+					AutomationProperties.Name="Decrease grid text size"
+					Content="A&#x2013;" />
+				<Button
+					Margin="4,0,0,0"
+					Padding="10,4"
+					VerticalAlignment="Stretch"
+					Command="{Binding ResetGridFontSize}"
+					ToolTip.Tip="Reset grid text to default size"
+					AutomationProperties.Name="Reset grid text size to default"
+					Content="A0" />
+				<Button
+					Margin="4,0,0,0"
+					Padding="10,4"
+					VerticalAlignment="Stretch"
+					Command="{Binding IncreaseGridFontSize}"
+					ToolTip.Tip="Larger grid text"
+					AutomationProperties.Name="Increase grid text size"
+					Content="A+" />
 				<Button Padding="2,6" VerticalAlignment="Stretch" Command="{Binding ToggleQueueHideBtn}">
 					<Path Stretch="Uniform" Fill="{DynamicResource IconFill}" Data="{StaticResource	LeftArrows}">
 						<Path.RenderTransform>

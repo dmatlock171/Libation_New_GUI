@@ -22,9 +22,9 @@ partial class MainVM
 	/// <summary> Indicates if any of the books visible in the Products Display haven't been liberated </summary>
 	public bool AnyVisibleNotLiberated => _visibleNotLiberated > 0;
 	/// <summary> The "Liberate Visible Books" menu item header text (submenu item of the "Liberate Menu" menu item) </summary>
-	public string LiberateVisibleToolStripText { get; private set; } = "Liberate _Visible Books: 0";
+	public string LiberateVisibleToolStripText { get; private set; } = "Download _Visible Books: 0";
 	/// <summary> The "Liberate" menu item header text (submenu item of the "Visible Books" menu item) </summary>
-	public string LiberateVisibleToolStripText_2 { get; private set; } = menufyText("Liberate: 0");
+	public string LiberateVisibleToolStripText_2 { get; private set; } = menufyText("Download: 0");
 
 	private void Configure_VisibleBooks()
 	{
@@ -45,13 +45,13 @@ partial class MainVM
 
 		LiberateVisibleToolStripText
 			= AnyVisibleNotLiberated
-			? "Liberate " + menufyText($"Visible Books: {visibleNotLiberated}")
-			: "All visible books are liberated";
+			? "Download " + menufyText($"Visible Books: {visibleNotLiberated}")
+			: "All visible books are downloaded";
 
 		LiberateVisibleToolStripText_2
 			= AnyVisibleNotLiberated
-			? menufyText($"Liberate: {visibleNotLiberated}")
-			: "All visible books are liberated";
+			? menufyText($"Download: {visibleNotLiberated}")
+			: "All visible books are downloaded";
 
 		this.RaisePropertyChanged(nameof(AnyVisibleNotLiberated));
 		this.RaisePropertyChanged(nameof(LiberateVisibleToolStripText));

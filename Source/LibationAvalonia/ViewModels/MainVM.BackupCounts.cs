@@ -13,9 +13,9 @@ partial class MainVM
 	private readonly System.ComponentModel.BackgroundWorker updateCountsBw = new();
 
 	/// <summary> The "Begin Book and PDF Backup" menu item header text </summary>
-	public string BookBackupsToolStripText { get; private set; } = "Begin Book and PDF Backups: 0";
+	public string BookBackupsToolStripText { get; private set; } = "Download Books and PDFs: 0";
 	/// <summary> The "Begin PDF Only Backup" menu item header text </summary>
-	public string PdfBackupsToolStripText { get; private set; } = "Begin PDF Only Backups: 0";
+	public string PdfBackupsToolStripText { get; private set; } = "Download PDFs only: 0";
 
 	/// <summary> The user's library statistics </summary>
 	public LibraryCommands.LibraryStats? LibraryStats
@@ -27,12 +27,12 @@ partial class MainVM
 
 			BookBackupsToolStripText
 				= LibraryStats?.HasPendingBooks ?? false
-				? "Begin " + menufyText($"Book and PDF Backups: {LibraryStats.PendingBooks} remaining")
-				: "All books have been liberated";
+				? "Download " + menufyText($"Books and PDFs: {LibraryStats.PendingBooks} remaining")
+				: "All books have been downloaded";
 
 			PdfBackupsToolStripText
 				= LibraryStats?.pdfsNotDownloaded > 0
-				? "Begin " + menufyText($"PDF Only Backups: {LibraryStats.pdfsNotDownloaded} remaining")
+				? "Download " + menufyText($"PDFs only: {LibraryStats.pdfsNotDownloaded} remaining")
 				: "All PDFs have been downloaded";
 
 			this.RaisePropertyChanged(nameof(BookBackupsToolStripText));
