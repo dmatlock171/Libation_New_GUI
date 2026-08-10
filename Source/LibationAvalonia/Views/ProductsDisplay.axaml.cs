@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using Avalonia.VisualTree;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
@@ -65,6 +66,9 @@ public partial class ProductsDisplay : UserControl
 		fontSizeStyle = new Style(_ => tboxSelector);
 		fontSizeStyle.Setters.Add(fontSizeSetter);
 
+		textWrapStyle = new Style(_ => tboxSelector);
+		textWrapStyle.Setters.Add(textWrapSetter);
+
 		var tboxH1Selector = cellSelector.Child().Is<Panel>().Child().Is<TextBlock>().Class("h1");
 		fontSizeH1Style = new Style(_ => tboxH1Selector);
 		fontSizeH1Style.Setters.Add(fontSizeH1Setter);
@@ -75,6 +79,7 @@ public partial class ProductsDisplay : UserControl
 
 		Configuration.Instance.PropertyChanged += Configuration_GridScaleChanged;
 		Configuration.Instance.PropertyChanged += Configuration_FontChanged;
+		Configuration.Instance.PropertyChanged += Configuration_TextWrappingChanged;
 
 		#region Design Mode Testing
 #if DEBUG
@@ -102,6 +107,7 @@ public partial class ProductsDisplay : UserControl
 
 		setGridScale(Configuration.Instance.GridScaleFactor);
 		setFontScale(Configuration.Instance.GridFontScaleFactor);
+		setTextWrapping(Configuration.Instance.GridTextWrapping);
 		Configure_ColumnCustomization();
 
 		foreach (var column in productsGrid.Columns)
@@ -115,7 +121,42 @@ public partial class ProductsDisplay : UserControl
 		{
 			productsGrid.AddHandler(InputElement.PointerPressedEvent, ProductsGrid_PointerPressedMacContextMenu, RoutingStrategies.Bubble, handledEventsToo: true);
 		}
+
+		// Ctrl + wheel resizes rows and text together. Tunnel so this is seen before
+		// the DataGrid's ScrollViewer consumes the wheel event and scrolls instead.
+		productsGrid.AddHandler(InputElement.PointerWheelChangedEvent, ProductsGrid_CtrlWheelZoom, RoutingStrategies.Tunnel, handledEventsToo: true);
 	}
+
+	private const float MinGridScale = 0.5f;
+	private const float MaxGridScale = 2f;
+	private const float GridScaleStep = 0.1f;
+
+	private void ProductsGrid_CtrlWheelZoom(object? sender, PointerWheelEventArgs e)
+	{
+		if (!e.KeyModifiers.HasFlag(KeyModifiers.Control))
+			return;
+
+		// Wheel up (positive Y) enlarges, wheel down shrinks.
+		var delta = e.Delta.Y > 0 ? GridScaleStep : -GridScaleStep;
+
+		var config = Configuration.Instance;
+		var fontScale = ClampGridScale(config.GridFontScaleFactor + delta);
+		var gridScale = ClampGridScale(config.GridScaleFactor + delta);
+
+		if (fontScale != config.GridFontScaleFactor)
+			config.GridFontScaleFactor = fontScale;
+
+		if (gridScale != config.GridScaleFactor)
+			config.GridScaleFactor = gridScale;
+
+		// Prevent the grid from also scrolling.
+		e.Handled = true;
+	}
+
+	private static float ClampGridScale(float scale)
+		=> scale < MinGridScale ? MinGridScale
+		: scale > MaxGridScale ? MaxGridScale
+		: scale;
 
 	private void ProductsGrid_PointerPressedMacContextMenu(object? sender, PointerPressedEventArgs e)
 	{
@@ -201,6 +242,9 @@ public partial class ProductsDisplay : UserControl
 	private readonly Style fontSizeStyle;
 	private readonly Setter fontSizeSetter = new() { Property = TextBlock.FontSizeProperty };
 
+	private readonly Style textWrapStyle;
+	private readonly Setter textWrapSetter = new() { Property = TextBlock.TextWrappingProperty };
+
 	private readonly Style fontSizeH1Style;
 	private readonly Setter fontSizeH1Setter = new() { Property = TextBlock.FontSizeProperty };
 
@@ -223,6 +267,21 @@ public partial class ProductsDisplay : UserControl
 		productsGrid.Styles.Add(fontSizeStyle);
 		productsGrid.Styles.Add(fontSizeH1Style);
 		productsGrid.Styles.Add(fontSizeH2Style);
+	}
+
+	[PropertyChangeFilter(nameof(Configuration.GridTextWrapping))]
+	private void Configuration_TextWrappingChanged(object sender, Dinah.Core.PropertyChangedEventArgsEx e)
+	{
+		if (e.NewValue is bool value)
+			setTextWrapping(value);
+	}
+
+	private void setTextWrapping(bool wrap)
+	{
+		textWrapSetter.Value = wrap ? TextWrapping.Wrap : TextWrapping.NoWrap;
+
+		productsGrid.Styles.Remove(textWrapStyle);
+		productsGrid.Styles.Add(textWrapStyle);
 	}
 
 	private void setGridScale(double scaleFactor)

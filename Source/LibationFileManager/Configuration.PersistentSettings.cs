@@ -117,6 +117,12 @@ public partial class Configuration
 	[Description("Book display font size")]
 	public float GridFontScaleFactor { get => float.Min(2, float.Max(0.5f, GetNonString(defaultValue: 1f))); set => SetNonString(value); }
 
+	[Description("Wrap text in grid columns that are too narrow to fit")]
+	public bool GridTextWrapping { get => GetNonString(defaultValue: false); set => SetNonString(value); }
+
+	[Description("Hide imprints and brands (eg: The Great Courses) from the last-name author columns")]
+	public bool StripNonPersonAuthors { get => GetNonString(defaultValue: false); set => SetNonString(value); }
+
 	[Description("Use the beta version of Libation\r\nNew and experimental features, but probably buggy.\r\n(requires restart to take effect)")]
 	public bool BetaOptIn { get => GetNonString(defaultValue: false); set => SetNonString(value); }
 

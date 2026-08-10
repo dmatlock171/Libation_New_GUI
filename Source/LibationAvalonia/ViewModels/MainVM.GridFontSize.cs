@@ -16,6 +16,43 @@ public partial class MainVM
 	public void IncreaseGridFontSize() => StepGridFontScale(FontScaleStep);
 	public void DecreaseGridFontSize() => StepGridFontScale(-FontScaleStep);
 
+	/// <summary> Row height only. Leaves text size untouched. </summary>
+	public void IncreaseRowHeight() => StepRowHeight(FontScaleStep);
+	/// <summary> Row height only. Leaves text size untouched. </summary>
+	public void DecreaseRowHeight() => StepRowHeight(-FontScaleStep);
+
+	private static void StepRowHeight(float delta)
+	{
+		var config = Configuration.Instance;
+		var gridScale = Clamp(config.GridScaleFactor + delta);
+
+		if (gridScale != config.GridScaleFactor)
+			config.GridScaleFactor = gridScale;
+	}
+
+	/// <summary> Restores row height to the default, leaving text size untouched. </summary>
+	public void ResetRowHeight()
+	{
+		var config = Configuration.Instance;
+
+		if (config.GridScaleFactor != DefaultScale)
+			config.GridScaleFactor = DefaultScale;
+	}
+
+	/// <summary> Text size only. Leaves row height untouched, so text may clip. </summary>
+	public void IncreaseTextOnly() => StepTextOnly(FontScaleStep);
+	/// <summary> Text size only. Leaves row height untouched, so text may clip. </summary>
+	public void DecreaseTextOnly() => StepTextOnly(-FontScaleStep);
+
+	private static void StepTextOnly(float delta)
+	{
+		var config = Configuration.Instance;
+		var fontScale = Clamp(config.GridFontScaleFactor + delta);
+
+		if (fontScale != config.GridFontScaleFactor)
+			config.GridFontScaleFactor = fontScale;
+	}
+
 	/// <summary> Restores both scale factors to the application default. </summary>
 	public void ResetGridFontSize()
 	{

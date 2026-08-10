@@ -8,10 +8,27 @@
 		xmlns:controls="clr-namespace:LibationAvalonia.Controls"
 		mc:Ignorable="d" d:DesignWidth="1850" d:DesignHeight="700"
 		x:Class="LibationAvalonia.Views.MainWindow"
-		Title="Libation: Liberate your Library"
+		Title="Libation (Tipple): Liberate your Library"
 		x:DataType="vm:MainVM"
 		Name="Form1"
 		Icon="/Assets/libation.ico">
+
+	<Window.KeyBindings>
+		<!-- Both together -->
+		<KeyBinding Gesture="Ctrl+OemPlus" Command="{Binding IncreaseGridFontSize}" />
+		<KeyBinding Gesture="Ctrl+Add" Command="{Binding IncreaseGridFontSize}" />
+		<KeyBinding Gesture="Ctrl+OemMinus" Command="{Binding DecreaseGridFontSize}" />
+		<KeyBinding Gesture="Ctrl+Subtract" Command="{Binding DecreaseGridFontSize}" />
+		<KeyBinding Gesture="Ctrl+D0" Command="{Binding ResetGridFontSize}" />
+
+		<!-- Row height only -->
+		<KeyBinding Gesture="Ctrl+Alt+OemPlus" Command="{Binding IncreaseRowHeight}" />
+		<KeyBinding Gesture="Ctrl+Alt+OemMinus" Command="{Binding DecreaseRowHeight}" />
+
+		<!-- Text size only -->
+		<KeyBinding Gesture="Ctrl+Shift+OemPlus" Command="{Binding IncreaseTextOnly}" />
+		<KeyBinding Gesture="Ctrl+Shift+OemMinus" Command="{Binding DecreaseTextOnly}" />
+	</Window.KeyBindings>
 
 	<NativeMenu.Menu>
 		<NativeMenu>
@@ -130,6 +147,14 @@
 				<!-- View Menu -->
 
 				<MenuItem Header="_View">
+					<MenuItem Header="_Theme">
+						<MenuItem Command="{Binding SetThemeSystem}" Header="Match _system" ToggleType="Radio" IsChecked="{Binding ThemeIsSystem, Mode=OneWay}" />
+						<MenuItem Command="{Binding SetThemeLight}" Header="_Light" ToggleType="Radio" IsChecked="{Binding ThemeIsLight, Mode=OneWay}" />
+						<MenuItem Command="{Binding SetThemeDark}" Header="_Dark" ToggleType="Radio" IsChecked="{Binding ThemeIsDark, Mode=OneWay}" />
+					</MenuItem>
+					<MenuItem Command="{Binding ToggleGridTextWrapping}" Header="_Wrap text in narrow columns" ToggleType="CheckBox" IsChecked="{Binding GridTextWrapping, Mode=OneWay}" />
+					<MenuItem Command="{Binding ToggleStripNonPersonAuthors}" Header="Hide _imprints from last-name columns" ToggleType="CheckBox" IsChecked="{Binding StripNonPersonAuthors, Mode=OneWay}" ToolTip.Tip="Hides non-people such as 'The Great Courses' from the last-name author and narrator columns" />
+					<Separator />
 					<MenuItem Name="quickFiltersToolStripMenuItem" Header="Quick _Filters" ItemsSource="{Binding QuickFilterMenuItems}" />
 					<Separator />
 					<MenuItem Header="{Binding VisibleCountMenuItemText}" >
@@ -239,6 +264,30 @@
 					ToolTip.Tip="Larger grid text"
 					AutomationProperties.Name="Increase grid text size"
 					Content="A+" />
+				<Button
+					Margin="10,0,0,0"
+					Padding="10,4"
+					VerticalAlignment="Stretch"
+					Command="{Binding DecreaseRowHeight}"
+					ToolTip.Tip="Shorter rows (text size unchanged)"
+					AutomationProperties.Name="Decrease row height"
+					Content="R&#x2013;" />
+				<Button
+					Margin="4,0,0,0"
+					Padding="10,4"
+					VerticalAlignment="Stretch"
+					Command="{Binding ResetRowHeight}"
+					ToolTip.Tip="Reset rows to default height"
+					AutomationProperties.Name="Reset row height to default"
+					Content="R0" />
+				<Button
+					Margin="4,0,0,0"
+					Padding="10,4"
+					VerticalAlignment="Stretch"
+					Command="{Binding IncreaseRowHeight}"
+					ToolTip.Tip="Taller rows (text size unchanged)"
+					AutomationProperties.Name="Increase row height"
+					Content="R+" />
 				<Button Padding="2,6" VerticalAlignment="Stretch" Command="{Binding ToggleQueueHideBtn}">
 					<Path Stretch="Uniform" Fill="{DynamicResource IconFill}" Data="{StaticResource	LeftArrows}">
 						<Path.RenderTransform>

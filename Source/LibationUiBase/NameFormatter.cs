@@ -28,6 +28,88 @@ public static class NameFormatter
 	/// </summary>
 	public static Dictionary<string, string> Overrides { get; } = new(StringComparer.OrdinalIgnoreCase);
 
+	/// <summary>
+	/// Names that aren't people. Audible lists imprints, series brands and
+	/// production companies in the author field; those shouldn't be reordered
+	/// as "Courses, The Great" or sorted under T.
+	/// <para/>
+	/// Seeded with common cases and extended by the user's customization file.
+	/// </summary>
+	public static HashSet<string> NonPersonNames { get; } = new(StringComparer.OrdinalIgnoreCase)
+	{
+		"The Great Courses",
+		"Great Courses",
+		"Audible Originals",
+		"Audible Studios",
+		"Audible Original",
+		"full cast",
+		"a full cast",
+		"various authors",
+		"various",
+		"anonymous",
+		"uncredited",
+	};
+
+	/// <summary> File in the Libation files folder holding user customizations. </summary>
+	public const string CustomizationsFileName = "NameCustomizations.json";
+
+	private static bool customizationsLoaded;
+
+	/// <summary>
+	/// Loads user customizations from <see cref="CustomizationsFileName"/> if present.
+	/// Expected shape:
+	/// <code>
+	/// {
+	///   "nonPersonNames": [ "Some Imprint" ],
+	///   "overrides": { "Ursula K. Le Guin": "Le Guin, Ursula K." }
+	/// }
+	/// </code>
+	/// Failures are swallowed: a malformed file must not stop the grid from loading.
+	/// </summary>
+	public static void LoadCustomizations()
+	{
+		if (customizationsLoaded)
+			return;
+
+		customizationsLoaded = true;
+
+		try
+		{
+			var path = System.IO.Path.Combine(
+				LibationFileManager.Configuration.Instance.LibationFiles.Location,
+				CustomizationsFileName);
+
+			if (!System.IO.File.Exists(path))
+				return;
+
+			var json = Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText(path));
+
+			if (json["nonPersonNames"] is Newtonsoft.Json.Linq.JArray names)
+			{
+				foreach (var token in names)
+				{
+					var name = token.ToString();
+					if (!string.IsNullOrWhiteSpace(name))
+						NonPersonNames.Add(name.Trim());
+				}
+			}
+
+			if (json["overrides"] is Newtonsoft.Json.Linq.JObject overrides)
+			{
+				foreach (var pair in overrides)
+				{
+					var replacement = pair.Value?.ToString();
+					if (!string.IsNullOrWhiteSpace(replacement))
+						Overrides[pair.Key] = replacement;
+				}
+			}
+		}
+		catch
+		{
+			// Malformed or unreadable customization file: fall back to built-in defaults.
+		}
+	}
+
 	/// <summary> Generational and honorific suffixes that trail the surname. </summary>
 	private static readonly HashSet<string> Suffixes = new(StringComparer.OrdinalIgnoreCase)
 	{
@@ -65,12 +147,20 @@ public static class NameFormatter
 		if (string.IsNullOrWhiteSpace(names))
 			return string.Empty;
 
+		LoadCustomizations();
+
+		var stripNonPersons = LibationFileManager.Configuration.Instance.StripNonPersonAuthors;
+
 		var converted = names
 			.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+			.Where(n => !stripNonPersons || !NonPersonNames.Contains(n))
 			.Select(SingleToSurnameFirst)
 			.Where(n => !string.IsNullOrWhiteSpace(n));
 
-		return string.Join(Separator, converted);
+		var result = string.Join(Separator, converted);
+
+		// Everything was stripped: better to show the original than an empty cell.
+		return string.IsNullOrWhiteSpace(result) ? names : result;
 	}
 
 	/// <summary> Converts one name to "Surname, Given" form. </summary>
