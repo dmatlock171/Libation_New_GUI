@@ -55,16 +55,63 @@ public static class ThemeDescriptions
 	}
 
 	/// <summary>
-	/// Only entries confirmed by observation. Deliberately sparse: a wrong label is
-	/// worse than none. User edits win, so these never overwrite existing notes.
+	/// Starting notes. Entries marked "?" are Fluent conventions rather than anything
+	/// observed in Libation, and several palette colours may do nothing visible here at
+	/// all - correct them as you find out. User edits always win; these only fill gaps.
 	/// </summary>
 	private static void SeedKnownDescriptions()
 	{
 		if (descriptions is null)
 			return;
 
-		AddIfMissing("BaseMediumLow", "Grid lines, grid border, queue divider");
+		// --- Libation's own brushes: confirmed from their usage in the source ---
+		AddIfMissing("GridLines", "Grid row/column separators, grid border, column header dividers");
+		AddIfMissing("WindowOutline", "Outline just inside every window edge, and the OS window border");
+		AddIfMissing("WindowCaption", "Title bar background (Windows 11 only)");
+		AddIfMissing("WindowCaptionText", "Title bar text (Windows 11 only)");
+		AddIfMissing("IconFill", "Menu and toolbar icons, queue collapse arrow");
+		AddIfMissing("StoplightRed", "Status column traffic light: not downloaded");
+		AddIfMissing("StoplightYellow", "Status column traffic light: partially downloaded");
+		AddIfMissing("StoplightGreen", "Status column traffic light: downloaded");
+		AddIfMissing("CancelRed", "Error icon in the status column");
+		AddIfMissing("HyperlinkNew", "Unvisited links");
+		AddIfMissing("HyperlinkVisited", "Visited links");
+		AddIfMissing("SeriesEntryGridBackgroundBrush", "Background of series parent rows in the grid");
+		AddIfMissing("ProcessQueueBookFailedBrush", "Process queue: failed item background");
+		AddIfMissing("ProcessQueueBookCompletedBrush", "Process queue: completed item background");
+		AddIfMissing("ProcessQueueBookCancelledBrush", "Process queue: cancelled item background");
+
+		// --- Observed in Libation ---
+		AddIfMissing("BaseHigh", "Primary text colour throughout the app");
 		AddIfMissing("BaseLow", "Line beneath the menu bar");
+		AddIfMissing("BaseMediumLow", "Window chrome borders, queue divider");
+
+		// --- Fluent conventions, NOT verified in Libation ---
+		AddIfMissing("Accent", "? Selection highlight, focus rings");
+		AddIfMissing("RegionColor", "? Window background");
+		AddIfMissing("ErrorText", "? Validation and error text");
+		AddIfMissing("BaseMedium", "? Secondary/muted text");
+		AddIfMissing("BaseMediumHigh", "? Slightly muted text");
+		AddIfMissing("AltHigh", "? Control backgrounds, opposite of Base");
+		AddIfMissing("AltLow", "? Subtle control backgrounds");
+		AddIfMissing("AltMedium", "? Mid-tone control backgrounds");
+		AddIfMissing("AltMediumHigh", "? Mid-tone control backgrounds");
+		AddIfMissing("AltMediumLow", "? Mid-tone control backgrounds");
+		AddIfMissing("ChromeHigh", "? Control borders");
+		AddIfMissing("ChromeLow", "? Control fills");
+		AddIfMissing("ChromeMedium", "? Panel and toolbar backgrounds");
+		AddIfMissing("ChromeMediumLow", "? Panel backgrounds");
+		AddIfMissing("ChromeAltLow", "? Button text (see App.axaml Button style)");
+		AddIfMissing("ChromeGray", "? Neutral chrome elements");
+		AddIfMissing("ChromeWhite", "? Highest-contrast chrome");
+		AddIfMissing("ChromeDisabledHigh", "? Disabled control background");
+		AddIfMissing("ChromeDisabledLow", "? Disabled control text; read-only text boxes");
+		AddIfMissing("ChromeBlackHigh", "? Rarely used in Libation");
+		AddIfMissing("ChromeBlackLow", "? Rarely used in Libation");
+		AddIfMissing("ChromeBlackMedium", "? Rarely used in Libation");
+		AddIfMissing("ChromeBlackMediumLow", "? Rarely used in Libation");
+		AddIfMissing("ListLow", "? List item pressed background");
+		AddIfMissing("ListMedium", "? List item hover background");
 
 		void AddIfMissing(string key, string value)
 		{
