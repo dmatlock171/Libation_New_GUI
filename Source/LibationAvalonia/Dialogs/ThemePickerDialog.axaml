@@ -40,6 +40,10 @@
 						Width="Auto"
 						Binding="{Binding ThemeItemName, Mode=TwoWay}"
 						Header="Theme Item"/>
+					<DataGridTextColumn
+						Width="280"
+						Binding="{Binding Description, Mode=TwoWay}"
+						Header="What it affects (your notes)"/>
 				</DataGrid.Columns>
 			</DataGrid>
 			<Grid
@@ -68,7 +72,7 @@
 				<Button
 					Grid.Column="2"
 					Content="Defaults"
-					Command="{Binding LoadDefaultColors}" />			
+					Command="{Binding LoadDefaultColors}" />
 				<Button
 					Grid.Column="4"
 					Content="Save"

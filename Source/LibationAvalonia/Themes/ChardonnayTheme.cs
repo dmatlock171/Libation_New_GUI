@@ -114,19 +114,58 @@ public class ChardonnayTheme : IUpdatable, ICloneable
 
 		if (fluentColorChanged)
 		{
-			var oldFluent = App.Current.Styles.OfType<FluentTheme>().Single();
-			App.Current.Styles.Remove(oldFluent);
-
-			//We must make a new fluent theme and add it to the app for
-			//the changes to the ColorPaletteResources to take effect.
-			//Changes to the Libation-specific resources are instant.
-			var newFluent = new FluentTheme();
-
-			foreach (var kvp in ColorPalettes)
-				newFluent.Palettes[kvp.Key] = kvp.Value;
-
-			App.Current.Styles.Add(newFluent);
+			if (SuspendFluentRebuild)
+				pendingFluentRebuild = true;
+			else
+				RebuildFluentTheme();
 		}
+	}
+
+	private static bool pendingFluentRebuild;
+
+	/// <summary>
+	/// While true, palette changes are recorded but the FluentTheme is not rebuilt.
+	/// <para/>
+	/// Rebuilding re-templates every realised control in the app. If a window is open
+	/// at the time, its visual tree is left inconsistent, and the next time that window
+	/// re-templates it throws "Grid already has a visual parent". The theme editor hits
+	/// this reliably: change a colour, close the colour picker, reopen it, crash.
+	/// <para/>
+	/// Note the crash surfaces on the *next* measure pass, not during the rebuild, which
+	/// is why deferring the rebuild or replacing the style in place does not help. The
+	/// only reliable remedy found is not rebuilding while such a window is open.
+	/// </summary>
+	public static bool SuspendFluentRebuild
+	{
+		get => field;
+		set
+		{
+			field = value;
+
+			if (!value && pendingFluentRebuild)
+			{
+				pendingFluentRebuild = false;
+				RebuildFluentTheme();
+			}
+		}
+	}
+
+	private static void RebuildFluentTheme()
+	{
+		if (App.Current?.Styles.OfType<FluentTheme>().SingleOrDefault() is not FluentTheme oldFluent)
+			return;
+
+		App.Current.Styles.Remove(oldFluent);
+
+		//We must make a new fluent theme and add it to the app for
+		//the changes to the ColorPaletteResources to take effect.
+		//Changes to the Libation-specific resources are instant.
+		var newFluent = new FluentTheme();
+
+		foreach (var kvp in ColorPalettes)
+			newFluent.Palettes[kvp.Key] = kvp.Value;
+
+		App.Current.Styles.Add(newFluent);
 	}
 
 	/// <summary> Get the currently-active theme colors. </summary>

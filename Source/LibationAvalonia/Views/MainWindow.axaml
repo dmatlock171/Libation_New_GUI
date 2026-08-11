@@ -151,6 +151,9 @@
 						<MenuItem Command="{Binding SetThemeSystem}" Header="Match _system" ToggleType="Radio" IsChecked="{Binding ThemeIsSystem, Mode=OneWay}" />
 						<MenuItem Command="{Binding SetThemeLight}" Header="_Light" ToggleType="Radio" IsChecked="{Binding ThemeIsLight, Mode=OneWay}" />
 						<MenuItem Command="{Binding SetThemeDark}" Header="_Dark" ToggleType="Radio" IsChecked="{Binding ThemeIsDark, Mode=OneWay}" />
+						<Separator />
+						<MenuItem Header="Saved _color schemes" ItemsSource="{Binding SavedThemeMenuItems}" />
+						<MenuItem Command="{Binding ShowThemeEditor}" Header="_Edit colors..." />
 					</MenuItem>
 					<MenuItem Command="{Binding ToggleGridTextWrapping}" Header="_Wrap text in narrow columns" ToggleType="CheckBox" IsChecked="{Binding GridTextWrapping, Mode=OneWay}" />
 					<MenuItem Command="{Binding ToggleStripNonPersonAuthors}" Header="Hide _imprints from last-name columns" ToggleType="CheckBox" IsChecked="{Binding StripNonPersonAuthors, Mode=OneWay}" ToolTip.Tip="Hides non-people such as 'The Great Courses' from the last-name author and narrator columns" />
@@ -190,14 +193,14 @@
 		</Grid>
 		</Border>
 		<!-- Buttons and Search Box -->
-		<Grid Grid.Row="1" Margin="8" Height="30" ColumnDefinitions="Auto,*,Auto">
+		<Grid Grid.Row="1" Margin="8,4" Height="48" ColumnDefinitions="Auto,*,Auto">
 
 			<Grid.Styles>
 				<Style Selector="TextBox">
 					<Setter Property="MinHeight" Value="10" />
 				</Style>
 				<Style Selector="Button">
-					<Setter Property="Padding" Value="15,6" />
+					<Setter Property="Padding" Value="12,2" />
 					<Setter Property="Margin" Value="10,0,0,0" />
 					<Setter Property="HorizontalContentAlignment" Value="Center" />
 					<Setter Property="VerticalContentAlignment" Value="Center" />
@@ -217,12 +220,16 @@
 			<Grid
 				Grid.Column="1"
 				Margin="10,0,0,0"
+				MaxWidth="620"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Center"
 				ColumnDefinitions="*,Auto"
 				IsVisible="{Binding !RemoveButtonsVisible}">
 				<TextBox
 					Grid.Column="0"
 					Name="filterSearchTb"
-					VerticalAlignment="Stretch"
+					Height="28"
+					VerticalContentAlignment="Center"
 					InnerRightContent="{x:Null}"
 					ScrollViewer.HorizontalScrollBarVisibility="Auto"
 					ScrollViewer.VerticalScrollBarVisibility="Disabled"
@@ -231,65 +238,67 @@
 				<Button
 					Grid.Column="1"
 					Margin="6,0,0,0"
-					Padding="10,4"
-					VerticalAlignment="Stretch"
+					Padding="10,2"
+					Height="28"
 					VerticalContentAlignment="Center"
 					Click="ClearFilterButton_Click"
 					Content="×"
 					ToolTip.Tip="Clear filter" />
 			</Grid>
 
-			<StackPanel Grid.Column="2" Height="30" Orientation="Horizontal">
+			<StackPanel Grid.Column="2" Orientation="Horizontal">
 				<Button Name="filterBtn" IsVisible="{Binding !RemoveButtonsVisible}" Command="{Binding FilterBtn}" CommandParameter="{Binding #filterSearchTb.Text}" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="Filter"/>
-				<Button
-					Padding="10,4"
-					VerticalAlignment="Stretch"
-					Command="{Binding DecreaseGridFontSize}"
-					ToolTip.Tip="Smaller grid text"
-					AutomationProperties.Name="Decrease grid text size"
-					Content="A&#x2013;" />
-				<Button
-					Margin="4,0,0,0"
-					Padding="10,4"
-					VerticalAlignment="Stretch"
-					Command="{Binding ResetGridFontSize}"
-					ToolTip.Tip="Reset grid text to default size"
-					AutomationProperties.Name="Reset grid text size to default"
-					Content="A0" />
-				<Button
-					Margin="4,0,0,0"
-					Padding="10,4"
-					VerticalAlignment="Stretch"
-					Command="{Binding IncreaseGridFontSize}"
-					ToolTip.Tip="Larger grid text"
-					AutomationProperties.Name="Increase grid text size"
-					Content="A+" />
-				<Button
-					Margin="10,0,0,0"
-					Padding="10,4"
-					VerticalAlignment="Stretch"
-					Command="{Binding DecreaseRowHeight}"
-					ToolTip.Tip="Shorter rows (text size unchanged)"
-					AutomationProperties.Name="Decrease row height"
-					Content="R&#x2013;" />
-				<Button
-					Margin="4,0,0,0"
-					Padding="10,4"
-					VerticalAlignment="Stretch"
-					Command="{Binding ResetRowHeight}"
-					ToolTip.Tip="Reset rows to default height"
-					AutomationProperties.Name="Reset row height to default"
-					Content="R0" />
-				<Button
-					Margin="4,0,0,0"
-					Padding="10,4"
-					VerticalAlignment="Stretch"
-					Command="{Binding IncreaseRowHeight}"
-					ToolTip.Tip="Taller rows (text size unchanged)"
-					AutomationProperties.Name="Increase row height"
-					Content="R+" />
-				<Button Padding="2,6" VerticalAlignment="Stretch" Command="{Binding ToggleQueueHideBtn}">
-					<Path Stretch="Uniform" Fill="{DynamicResource IconFill}" Data="{StaticResource	LeftArrows}">
+
+				<!-- Text size on top, row height below -->
+				<StackPanel Orientation="Vertical" Margin="10,0,0,0">
+					<StackPanel Orientation="Horizontal">
+						<Button
+							Padding="10,2"
+							Command="{Binding DecreaseGridFontSize}"
+							ToolTip.Tip="Smaller grid text"
+							AutomationProperties.Name="Decrease grid text size"
+							Content="A&#x2013;" />
+						<Button
+							Margin="4,0,0,0"
+							Padding="10,2"
+							Command="{Binding ResetGridFontSize}"
+							ToolTip.Tip="Reset grid text to default size"
+							AutomationProperties.Name="Reset grid text size to default"
+							Content="A0" />
+						<Button
+							Margin="4,0,0,0"
+							Padding="10,2"
+							Command="{Binding IncreaseGridFontSize}"
+							ToolTip.Tip="Larger grid text"
+							AutomationProperties.Name="Increase grid text size"
+							Content="A+" />
+					</StackPanel>
+					<StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+						<Button
+							Padding="10,2"
+							Command="{Binding DecreaseRowHeight}"
+							ToolTip.Tip="Shorter rows (text size unchanged)"
+							AutomationProperties.Name="Decrease row height"
+							Content="R&#x2013;" />
+						<Button
+							Margin="4,0,0,0"
+							Padding="10,2"
+							Command="{Binding ResetRowHeight}"
+							ToolTip.Tip="Reset rows to default height"
+							AutomationProperties.Name="Reset row height to default"
+							Content="R0" />
+						<Button
+							Margin="4,0,0,0"
+							Padding="10,2"
+							Command="{Binding IncreaseRowHeight}"
+							ToolTip.Tip="Taller rows (text size unchanged)"
+							AutomationProperties.Name="Increase row height"
+							Content="R+" />
+					</StackPanel>
+				</StackPanel>
+
+				<Button Margin="10,0,0,0" Padding="4,2" Height="40" VerticalAlignment="Center" Command="{Binding ToggleQueueHideBtn}">
+					<Path Width="20" Height="20" Stretch="Uniform" Fill="{DynamicResource IconFill}" Data="{StaticResource	LeftArrows}">
 						<Path.RenderTransform>
 							<RotateTransform Angle="{Binding QueueButtonAngle}"/>
 						</Path.RenderTransform>

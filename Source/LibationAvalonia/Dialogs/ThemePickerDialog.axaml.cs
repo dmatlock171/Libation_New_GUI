@@ -27,7 +27,18 @@ public partial class ThemePickerDialog : DialogWindow
 
 		DataContext = this;
 		Closing += ThemePickerDialog_Closing;
+		Closed += ThemePickerDialog_Closed;
+
+		//Rebuilding the FluentTheme re-templates every realised control. Doing that
+		//while this window is open corrupts its visual tree, and the next time the
+		//window re-templates (eg. reopening a colour picker) it throws
+		//"Grid already has a visual parent". Palette changes are therefore batched
+		//and applied once, after this window is gone.
+		ChardonnayTheme.SuspendFluentRebuild = true;
 	}
+
+	private void ThemePickerDialog_Closed(object? sender, EventArgs e)
+		=> ChardonnayTheme.SuspendFluentRebuild = false;
 
 	private void ThemePickerDialog_Closing(object? sender, Avalonia.Controls.WindowClosingEventArgs e)
 	{
@@ -180,6 +191,21 @@ public partial class ThemePickerDialog : DialogWindow
 	{
 		public required string ThemeItemName { get; init; }
 		public required Action<Color, string>? ColorSetter { get; set; }
+
+		/// <summary>
+		/// User's own note about what this colour affects. Loaded lazily because
+		/// ThemeItemName isn't available until after object initialization, and saved
+		/// on every edit so notes aren't lost if the editor crashes.
+		/// </summary>
+		public string Description
+		{
+			get => field ??= Themes.ThemeDescriptions.Get(ThemeItemName);
+			set
+			{
+				this.RaiseAndSetIfChanged(ref field, value ?? string.Empty);
+				Themes.ThemeDescriptions.Set(ThemeItemName, field);
+			}
+		}
 
 		public Color ThemeColor
 		{
