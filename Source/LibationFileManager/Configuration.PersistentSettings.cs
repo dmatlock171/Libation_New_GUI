@@ -123,6 +123,12 @@ public partial class Configuration
 	[Description("Hide imprints and brands (eg: The Great Courses) from the last-name author columns")]
 	public bool StripNonPersonAuthors { get => GetNonString(defaultValue: false); set => SetNonString(value); }
 
+	[Description("Grid column the library was last sorted by")]
+	public string GridSortColumn { get => GetString(defaultValue: "") ?? ""; set => SetString(value); }
+
+	[Description("Whether the last grid sort was descending")]
+	public bool GridSortDescending { get => GetNonString(defaultValue: false); set => SetNonString(value); }
+
 	[Description("Use the beta version of Libation\r\nNew and experimental features, but probably buggy.\r\n(requires restart to take effect)")]
 	public bool BetaOptIn { get => GetNonString(defaultValue: false); set => SetNonString(value); }
 

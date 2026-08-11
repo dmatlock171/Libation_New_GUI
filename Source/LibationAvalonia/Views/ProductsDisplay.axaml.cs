@@ -125,7 +125,69 @@ public partial class ProductsDisplay : UserControl
 		// Ctrl + wheel resizes rows and text together. Tunnel so this is seen before
 		// the DataGrid's ScrollViewer consumes the wheel event and scrolls instead.
 		productsGrid.AddHandler(InputElement.PointerWheelChangedEvent, ProductsGrid_CtrlWheelZoom, RoutingStrategies.Tunnel, handledEventsToo: true);
+
+		productsGrid.Sorting += ProductsGrid_Sorting;
 	}
+
+	#region Sort persistence
+
+	private bool sortRestored;
+
+	/// <summary>
+	/// Records which column was sorted and in which direction.
+	/// <para/>
+	/// DataGridColumn doesn't expose SortDirection publicly, so the direction is
+	/// inferred from the DataGrid's own behaviour: clicking the already-sorted column
+	/// toggles the direction, clicking a different column starts ascending.
+	/// </summary>
+	private void ProductsGrid_Sorting(object? sender, DataGridColumnEventArgs e)
+	{
+		try
+		{
+			if (e.Column.SortMemberPath is not string path || string.IsNullOrEmpty(path))
+				return;
+
+			var config = Configuration.Instance;
+			var descending = config.GridSortColumn == path && !config.GridSortDescending;
+
+			config.GridSortColumn = path;
+			config.GridSortDescending = descending;
+		}
+		catch (Exception ex)
+		{
+			Serilog.Log.Logger.Error(ex, "Failed to save grid sort order");
+		}
+	}
+
+	/// <summary> Re-applies the saved sort once, after the grid first has rows. </summary>
+	private void RestoreSavedSort()
+	{
+		if (sortRestored)
+			return;
+
+		sortRestored = true;
+
+		try
+		{
+			var savedColumn = Configuration.Instance.GridSortColumn;
+
+			if (string.IsNullOrWhiteSpace(savedColumn))
+				return;
+
+			if (productsGrid.Columns.FirstOrDefault(c => c.SortMemberPath == savedColumn) is not DataGridColumn column)
+				return;
+
+			column.Sort(Configuration.Instance.GridSortDescending
+				? System.ComponentModel.ListSortDirection.Descending
+				: System.ComponentModel.ListSortDirection.Ascending);
+		}
+		catch (Exception ex)
+		{
+			Serilog.Log.Logger.Error(ex, "Failed to restore grid sort order");
+		}
+	}
+
+	#endregion
 
 	private const float MinGridScale = 0.5f;
 	private const float MaxGridScale = 2f;
@@ -205,6 +267,9 @@ public partial class ProductsDisplay : UserControl
 
 	private void ProductsDisplay_LoadingRow(object sender, DataGridRowEventArgs e)
 	{
+		//First row to render means the grid is populated and columns can be sorted.
+		RestoreSavedSort();
+
 		if (e.Row.DataContext is LibraryBookEntry entry && entry.Liberate?.IsEpisode is true)
 			e.Row.DynamicResource(DataGridRow.BackgroundProperty, "SeriesEntryGridBackgroundBrush");
 		else

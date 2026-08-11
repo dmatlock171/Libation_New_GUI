@@ -91,6 +91,9 @@
 		</NativeMenu>
 	</NativeMenu.Menu>
 
+	<!-- MainWindow isn't a DialogWindow, so it doesn't pick up the outline from the
+	     DialogWindow template and needs its own. -->
+	<Border BorderThickness="2" BorderBrush="{DynamicResource WindowOutline}">
 	<Grid RowDefinitions="Auto,Auto,*,Auto">
 		<Border Grid.Row="0"  BorderBrush="{DynamicResource SystemBaseLowColor}" BorderThickness="0,1">
 			<Grid ColumnDefinitions="*,Auto">
@@ -339,7 +342,8 @@
 			<TextBlock FontSize="14" Grid.Column="0" Text="Upgrading:" VerticalAlignment="Center" IsVisible="{Binding DownloadProgress, Converter={x:Static ObjectConverters.IsNotNull}}" />
 			<ProgressBar Grid.Column="1" Margin="5,0,10,0" VerticalAlignment="Stretch" Width="100" Value="{Binding DownloadProgress, TargetNullValue=0}" IsVisible="{Binding DownloadProgress, Converter={x:Static ObjectConverters.IsNotNull}}"/>
 			<TextBlock FontSize="14" Grid.Column="2" Text="{Binding VisibleCountText}" VerticalAlignment="Center" />
-			<TextBlock FontSize="14" Grid.Column="3" Text="{Binding LibraryStats?.StatusString}" VerticalAlignment="Center" />		
+			<TextBlock FontSize="14" Grid.Column="3" Text="{Binding LibraryStats?.StatusString}" VerticalAlignment="Center" />
 		</Grid>
 	</Grid>
+	</Border>
 </Window>

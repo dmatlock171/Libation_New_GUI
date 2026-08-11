@@ -482,6 +482,8 @@ public class ProductsDisplayViewModel : ViewModelBase
 	public DataGridLength TitleWidth { get => getColumnWidth("Title", 200); set => setColumnWidth("Title", value); }
 	public DataGridLength AuthorsWidth { get => getColumnWidth("Authors", 100); set => setColumnWidth("Authors", value); }
 	public DataGridLength NarratorsWidth { get => getColumnWidth("Narrators", 100); set => setColumnWidth("Narrators", value); }
+	public DataGridLength AuthorsSurnameFirstWidth { get => getColumnWidth("AuthorsSurnameFirst", 220); set => setColumnWidth("AuthorsSurnameFirst", value); }
+	public DataGridLength NarratorsSurnameFirstWidth { get => getColumnWidth("NarratorsSurnameFirst", 220); set => setColumnWidth("NarratorsSurnameFirst", value); }
 	public DataGridLength LengthWidth { get => getColumnWidth("Length", 80); set => setColumnWidth("Length", value); }
 	public DataGridLength SeriesWidth { get => getColumnWidth("Series", 100); set => setColumnWidth("Series", value); }
 	public DataGridLength SeriesOrderWidth { get => getColumnWidth("SeriesOrder", 60); set => setColumnWidth("SeriesOrder", value); }
