@@ -163,6 +163,29 @@ public static class NameFormatter
 		return string.IsNullOrWhiteSpace(result) ? names : result;
 	}
 
+	/// <summary>
+	/// Removes imprints, brands and other non-people from a comma-separated name list,
+	/// leaving the remaining names in their original order. Returns the input unchanged
+	/// when the setting is off, or when stripping would leave nothing.
+	/// </summary>
+	public static string StripNonPersons(string? names)
+	{
+		if (string.IsNullOrWhiteSpace(names))
+			return string.Empty;
+
+		if (!LibationFileManager.Configuration.Instance.StripNonPersonAuthors)
+			return names;
+
+		LoadCustomizations();
+
+		var kept = names
+			.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+			.Where(n => !NonPersonNames.Contains(n))
+			.ToList();
+
+		return kept.Count == 0 ? names : string.Join(", ", kept);
+	}
+
 	/// <summary> Converts one name to "Surname, Given" form. </summary>
 	public static string SingleToSurnameFirst(string? name)
 	{

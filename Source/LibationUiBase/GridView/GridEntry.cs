@@ -106,8 +106,8 @@ public abstract class GridEntry : ReactiveObject
 		RaiseAndSetIfChanged(ref _myRating, Book.UserDefinedItem.Rating, nameof(MyRating));
 		PurchaseDate = GetPurchaseDateString();
 		ProductRating = Book.Rating ?? new Rating(0, 0, 0);
-		Authors = Book.AuthorNames;
-		Narrators = Book.NarratorNames;
+		Authors = NameFormatter.StripNonPersons(Book.AuthorNames);
+		Narrators = NameFormatter.StripNonPersons(Book.NarratorNames);
 		AuthorsSurnameFirst = NameFormatter.ToSurnameFirst(Book.AuthorNames);
 		NarratorsSurnameFirst = NameFormatter.ToSurnameFirst(Book.NarratorNames);
 		Category = string.Join(", ", Book.LowestCategoryNames());
