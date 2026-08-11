@@ -18,6 +18,10 @@
 			</ControlTheme>
 			<ControlTheme x:Key="{x:Type DataGridColumnHeader}" TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
 				<Setter Property="Padding" Value="6,0,0,0" />
+				<!-- Header dividers come from the header's own theme, not the DataGrid's
+				     gridline brushes, so they need setting separately to match. -->
+				<Setter Property="SeparatorBrush" Value="{DynamicResource GridLines}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource GridLines}" />
 			</ControlTheme>
 			<x:Double x:Key="DataGridSortIconMinWidth">0</x:Double>
 
@@ -34,6 +38,10 @@
 					<SolidColorBrush x:Key="StoplightRed" Color="#F06060" />
 					<SolidColorBrush x:Key="StoplightYellow" Color="#F0E160" />
 					<SolidColorBrush x:Key="StoplightGreen" Color="#70FA70" />
+					<SolidColorBrush x:Key="WindowOutline" Color="#9AA0A6" />
+					<SolidColorBrush x:Key="WindowCaption" Color="#E8E8E8" />
+					<SolidColorBrush x:Key="WindowCaptionText" Color="#1A1A1A" />
+					<SolidColorBrush x:Key="GridLines" Color="#B0B4B8" />
 				</ResourceDictionary>
 				<ResourceDictionary x:Key="Dark">
 					<SolidColorBrush x:Key="SeriesEntryGridBackgroundBrush" Opacity="0.3" Color="#bed2fa" />
@@ -46,7 +54,11 @@
 					<SolidColorBrush x:Key="IconFill" Color="#DCE0DF" />
 					<SolidColorBrush x:Key="StoplightRed" Color="#7d1f1f" />
 					<SolidColorBrush x:Key="StoplightYellow" Color="#7d7d1f" />
-					<SolidColorBrush x:Key="StoplightGreen" Color="#1f7d1f" />					
+					<SolidColorBrush x:Key="StoplightGreen" Color="#1f7d1f" />
+					<SolidColorBrush x:Key="WindowOutline" Color="#7A8288" />
+					<SolidColorBrush x:Key="WindowCaption" Color="#3A4046" />
+					<SolidColorBrush x:Key="WindowCaptionText" Color="#E6E6E6" />
+					<SolidColorBrush x:Key="GridLines" Color="#4A5058" />
 				</ResourceDictionary>
 			</ResourceDictionary.ThemeDictionaries>
 		</ResourceDictionary>		
@@ -93,7 +105,12 @@
 			<Setter Property="Icon" Value="/Assets/libation.ico"/>
 			<Setter Property="Template">
 				<ControlTemplate>
-					<ContentPresenter Background="{DynamicResource SystemRegionColor}" Content="{TemplateBinding Content}" />
+					<!-- Windows draws almost no visible frame in dark mode, making window
+					     edges hard to find. WindowOutline is a Libation-specific brush, so
+					     editing it applies instantly without a FluentTheme rebuild. -->
+					<Border BorderThickness="2" BorderBrush="{DynamicResource WindowOutline}">
+						<ContentPresenter Background="{DynamicResource SystemRegionColor}" Content="{TemplateBinding Content}" />
+					</Border>
 				</ControlTemplate>
 			</Setter>
 			<Style Selector="^ Button:focus">
