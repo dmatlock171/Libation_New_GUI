@@ -67,6 +67,7 @@ public abstract class DialogWindow : Window
 	private void DialogWindow_Opened(object? sender, EventArgs e)
 	{
 		ControlToFocusOnShow?.Focus();
+		WindowChrome.ApplyThemeToTitleBar(this);
 	}
 
 	public void Close(DialogResult dialogResult)
