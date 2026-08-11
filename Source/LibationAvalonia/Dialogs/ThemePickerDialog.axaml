@@ -74,6 +74,12 @@
 					Content="Defaults"
 					Command="{Binding LoadDefaultColors}" />
 				<Button
+					Grid.Column="3"
+					HorizontalAlignment="Right"
+					Content="Undo"
+					ToolTip.Tip="Undo the last color change (Ctrl+Z)"
+					Command="{Binding UndoLastColorChange}" />
+				<Button
 					Grid.Column="4"
 					Content="Save"
 					Command="{Binding SaveAndCloseAsync}" />

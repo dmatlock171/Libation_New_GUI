@@ -25,6 +25,15 @@ public partial class ThemePickerDialog : DialogWindow
 		WorkingTheme = (ChardonnayTheme)ExistingTheme.Clone();
 		ThemeColors = new(EnumerateThemeItemColors());
 
+		foreach (var themeColor in ThemeColors)
+			themeColor.ChangeRecorder = RecordColorChange;
+
+		KeyBindings.Add(new Avalonia.Input.KeyBinding
+		{
+			Command = ReactiveUI.ReactiveCommand.Create(UndoLastColorChange),
+			Gesture = new Avalonia.Input.KeyGesture(Avalonia.Input.Key.Z, Avalonia.Input.KeyModifiers.Control),
+		});
+
 		DataContext = this;
 		Closing += ThemePickerDialog_Closing;
 		Closed += ThemePickerDialog_Closed;
@@ -39,6 +48,37 @@ public partial class ThemePickerDialog : DialogWindow
 
 	private void ThemePickerDialog_Closed(object? sender, EventArgs e)
 		=> ChardonnayTheme.SuspendFluentRebuild = false;
+
+	private readonly Stack<(ThemeItemColor Item, Color Previous)> undoStack = new();
+	private bool isUndoing;
+
+	private void RecordColorChange(ThemeItemColor item, Color previous)
+	{
+		//Undoing sets a colour too; recording that would make undo a no-op loop.
+		if (isUndoing)
+			return;
+
+		undoStack.Push((item, previous));
+	}
+
+	/// <summary> Ctrl+Z: reverts the most recent colour change. </summary>
+	public void UndoLastColorChange()
+	{
+		if (undoStack.Count == 0)
+			return;
+
+		var (item, previous) = undoStack.Pop();
+
+		isUndoing = true;
+		try
+		{
+			item.ThemeColor = previous;
+		}
+		finally
+		{
+			isUndoing = false;
+		}
+	}
 
 	private void ThemePickerDialog_Closing(object? sender, Avalonia.Controls.WindowClosingEventArgs e)
 	{
@@ -192,6 +232,9 @@ public partial class ThemePickerDialog : DialogWindow
 		public required string ThemeItemName { get; init; }
 		public required Action<Color, string>? ColorSetter { get; set; }
 
+		/// <summary> Called with the previous colour before each change, to build an undo stack. </summary>
+		public Action<ThemeItemColor, Color>? ChangeRecorder { get; set; }
+
 		/// <summary>
 		/// User's own note about what this colour affects. Loaded lazily because
 		/// ThemeItemName isn't available until after object initialization, and saved
@@ -213,9 +256,13 @@ public partial class ThemePickerDialog : DialogWindow
 			set
 			{
 				var setColors = !field.Equals(value);
+				var previous = field;
 				this.RaiseAndSetIfChanged(ref field, value);
 				if (setColors)
+				{
+					ChangeRecorder?.Invoke(this, previous);
 					ColorSetter?.Invoke(field, ThemeItemName);
+				}
 			}
 		}
 	}
