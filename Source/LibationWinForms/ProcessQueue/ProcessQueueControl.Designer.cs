@@ -42,6 +42,9 @@
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.virtualFlowControl2 = new LibationWinForms.ProcessQueue.VirtualFlowControl();
 			this.panel1 = new System.Windows.Forms.Panel();
+			this.autoScrollChk = new System.Windows.Forms.CheckBox();
+			this.concurrencyLbl = new System.Windows.Forms.Label();
+			this.concurrencyNum = new System.Windows.Forms.NumericUpDown();
 			this.label1 = new System.Windows.Forms.Label();
 			this.numericUpDown1 = new LibationWinForms.ProcessQueue.NumericUpDownSuffix();
 			this.btnCleanFinished = new System.Windows.Forms.Button();
@@ -59,6 +62,7 @@
 			this.tabPage1.SuspendLayout();
 			this.panel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.concurrencyNum)).BeginInit();
 			this.tabPage2.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.logDGV)).BeginInit();
 			this.panel2.SuspendLayout();
@@ -150,35 +154,68 @@
 			this.virtualFlowControl2.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.virtualFlowControl2.Location = new System.Drawing.Point(3, 3);
 			this.virtualFlowControl2.Name = "virtualFlowControl2";
-			this.virtualFlowControl2.Size = new System.Drawing.Size(390, 424);
+			this.virtualFlowControl2.Size = new System.Drawing.Size(390, 401);
 			this.virtualFlowControl2.TabIndex = 3;
 			// 
 			// panel1
 			// 
 			this.panel1.BackColor = System.Drawing.SystemColors.Control;
 			this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.panel1.Controls.Add(this.autoScrollChk);
+			this.panel1.Controls.Add(this.concurrencyLbl);
+			this.panel1.Controls.Add(this.concurrencyNum);
 			this.panel1.Controls.Add(this.label1);
 			this.panel1.Controls.Add(this.numericUpDown1);
 			this.panel1.Controls.Add(this.btnCleanFinished);
 			this.panel1.Controls.Add(this.cancelAllBtn);
 			this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.panel1.Location = new System.Drawing.Point(3, 427);
+			this.panel1.Location = new System.Drawing.Point(3, 403);
 			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(390, 29);
+			this.panel1.Size = new System.Drawing.Size(390, 52);
 			this.panel1.TabIndex = 2;
-			// 
+			//
+			// autoScrollChk
+			//
+			this.autoScrollChk.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Top;
+			this.autoScrollChk.AutoSize = true;
+			this.autoScrollChk.Checked = true;
+			this.autoScrollChk.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.autoScrollChk.Location = new System.Drawing.Point(82, 5);
+			this.autoScrollChk.Name = "autoScrollChk";
+			this.autoScrollChk.TabIndex = 6;
+			this.autoScrollChk.Text = "Auto-scroll";
+			this.autoScrollChk.UseVisualStyleBackColor = true;
+			//
+			// concurrencyLbl
+			//
+			this.concurrencyLbl.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Top;
+			this.concurrencyLbl.AutoSize = true;
+			this.concurrencyLbl.Location = new System.Drawing.Point(172, 7);
+			this.concurrencyLbl.Name = "concurrencyLbl";
+			this.concurrencyLbl.Size = new System.Drawing.Size(54, 15);
+			this.concurrencyLbl.TabIndex = 7;
+			this.concurrencyLbl.Text = "At once:";
+			//
+			// concurrencyNum
+			//
+			this.concurrencyNum.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Top;
+			this.concurrencyNum.Location = new System.Drawing.Point(230, 3);
+			this.concurrencyNum.Name = "concurrencyNum";
+			this.concurrencyNum.Size = new System.Drawing.Size(45, 23);
+			this.concurrencyNum.TabIndex = 8;
+			//
 			// label1
-			// 
+			//
 			this.label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(148, 6);
+			this.label1.Location = new System.Drawing.Point(148, 30);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(54, 15);
 			this.label1.TabIndex = 5;
 			this.label1.Text = "DL Limit:";
-			// 
+			//
 			// numericUpDown1
-			// 
+			//
 			this.numericUpDown1.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.numericUpDown1.DecimalPlaces = 1;
 			this.numericUpDown1.Increment = new decimal(new int[] {
@@ -186,7 +223,7 @@
             0,
             0,
             65536});
-			this.numericUpDown1.Location = new System.Drawing.Point(208, 2);
+			this.numericUpDown1.Location = new System.Drawing.Point(208, 26);
 			this.numericUpDown1.Maximum = new decimal(new int[] {
             999,
             0,
@@ -204,24 +241,24 @@
             0,
             0});
 			this.numericUpDown1.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
-			// 
+			//
 			// btnCleanFinished
-			// 
-			this.btnCleanFinished.Dock = System.Windows.Forms.DockStyle.Right;
+			//
+			this.btnCleanFinished.Anchor = System.Windows.Forms.AnchorStyles.Right | System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom;
 			this.btnCleanFinished.Location = new System.Drawing.Point(298, 0);
 			this.btnCleanFinished.Name = "btnCleanFinished";
-			this.btnCleanFinished.Size = new System.Drawing.Size(90, 23);
+			this.btnCleanFinished.Size = new System.Drawing.Size(90, 50);
 			this.btnCleanFinished.TabIndex = 3;
 			this.btnCleanFinished.Text = "Clear Finished";
 			this.btnCleanFinished.UseVisualStyleBackColor = true;
 			this.btnCleanFinished.Click += new System.EventHandler(this.btnClearFinished_Click);
-			// 
+			//
 			// cancelAllBtn
-			// 
-			this.cancelAllBtn.Dock = System.Windows.Forms.DockStyle.Left;
+			//
+			this.cancelAllBtn.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom;
 			this.cancelAllBtn.Location = new System.Drawing.Point(0, 0);
 			this.cancelAllBtn.Name = "cancelAllBtn";
-			this.cancelAllBtn.Size = new System.Drawing.Size(75, 23);
+			this.cancelAllBtn.Size = new System.Drawing.Size(78, 50);
 			this.cancelAllBtn.TabIndex = 2;
 			this.cancelAllBtn.Text = "Cancel All";
 			this.cancelAllBtn.UseVisualStyleBackColor = true;
@@ -333,6 +370,7 @@
 			this.panel1.ResumeLayout(false);
 			this.panel1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.concurrencyNum)).EndInit();
 			this.tabPage2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.logDGV)).EndInit();
 			this.panel2.ResumeLayout(false);
@@ -364,5 +402,8 @@
 		private System.Windows.Forms.Button logCopyBtn;
 		private NumericUpDownSuffix numericUpDown1;
 		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.CheckBox autoScrollChk;
+		private System.Windows.Forms.Label concurrencyLbl;
+		private System.Windows.Forms.NumericUpDown concurrencyNum;
 	}
 }

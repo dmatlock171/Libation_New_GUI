@@ -405,6 +405,40 @@ public partial class Configuration
 	[Description("Save all podcast episodes in a series to the series parent folder?")]
 	public bool SavePodcastsToParentFolder { get => GetNonString(defaultValue: false); set => SetNonString(value); }
 
+	[Description("Auto-scroll the download queue to keep active downloads in view.")]
+	public bool AutoScrollQueue { get => GetNonString(defaultValue: true); set => SetNonString(value); }
+
+	/// <summary>The lowest <see cref="MaxConcurrentDownloads"/> can go: one book at a time.</summary>
+	public const int MinConcurrentDownloads = 1;
+
+	/// <summary>
+	/// Hard ceiling on <see cref="MaxConcurrentDownloads"/>. Audible throttles license requests,
+	/// so concurrency stops helping well before this and starts producing license denials instead.
+	/// </summary>
+	public const int ConcurrentDownloadsHardLimit = 10;
+
+	/// <summary>Deliberately conservative. See <see cref="ConcurrentDownloadsHardLimit"/>.</summary>
+	public const int DefaultConcurrentDownloads = 3;
+
+	/// <summary>
+	/// The highest <see cref="MaxConcurrentDownloads"/> can go on this machine.
+	/// </summary>
+	/// <remarks>
+	/// Processor count is deliberately <em>not</em> the default. Downloading is bound by Audible's
+	/// license throttling rather than by local CPU, so core count says nothing about how many
+	/// concurrent downloads will succeed - it only bounds how many decrypts can usefully run at
+	/// once. It is therefore used as a ceiling and nothing more.
+	/// </remarks>
+	public static int MaxAllowedConcurrentDownloads
+		=> Math.Clamp(Environment.ProcessorCount, MinConcurrentDownloads, ConcurrentDownloadsHardLimit);
+
+	[Description("Maximum number of books to download and decrypt simultaneously. Set to 1 to download one book at a time.")]
+	public int MaxConcurrentDownloads
+	{
+		get => Math.Clamp(GetNonString(defaultValue: DefaultConcurrentDownloads), MinConcurrentDownloads, MaxAllowedConcurrentDownloads);
+		set => SetNonString(Math.Clamp(value, MinConcurrentDownloads, MaxAllowedConcurrentDownloads));
+	}
+
 	[Description("Global download speed limit in bytes per second.")]
 	public long DownloadSpeedLimit
 	{

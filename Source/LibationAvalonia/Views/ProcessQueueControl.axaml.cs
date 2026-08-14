@@ -152,9 +152,10 @@ public partial class ProcessQueueControl : UserControl
 
 	public async void CancelAllBtn_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
 	{
-		Queue?.ClearQueue();
-		if (Queue?.Current is not null)
-			await Queue.Current.CancelAsync();
+		// Cancels every active book, not just Current - with parallel downloads there
+		// can be several running at once.
+		if (_viewModel is not null)
+			await _viewModel.CancelAllAsync();
 	}
 
 	public void ClearFinishedBtn_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
