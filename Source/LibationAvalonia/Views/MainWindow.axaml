@@ -13,6 +13,13 @@
 		Name="Form1"
 		Icon="/Assets/libation.ico">
 
+	<Window.Resources>
+		<!-- Simple shapes for ribbon actions Libation has no existing icon for. -->
+		<StreamGeometry x:Key="RibbonExportIcon">M0,44 H12 V56 H48 V44 H60 V68 H0 Z M24,0 H36 V28 H52 L30,50 L8,28 H24 Z</StreamGeometry>
+		<StreamGeometry x:Key="RibbonSettingsIcon">M0,6 H60 V16 H0 Z M0,26 H60 V36 H0 Z M0,46 H60 V56 H0 Z</StreamGeometry>
+		<StreamGeometry x:Key="RibbonDownloadIcon">M24,0 H36 V28 H52 L30,50 L8,28 H24 Z M0,58 H60 V68 H0 Z</StreamGeometry>
+	</Window.Resources>
+
 	<Window.KeyBindings>
 		<!-- Both together -->
 		<KeyBinding Gesture="Ctrl+OemPlus" Command="{Binding IncreaseGridFontSize}" />
@@ -94,7 +101,7 @@
 	<!-- MainWindow isn't a DialogWindow, so it doesn't pick up the outline from the
 	     DialogWindow template and needs its own. -->
 	<Border BorderThickness="2" BorderBrush="{DynamicResource WindowOutline}">
-	<Grid RowDefinitions="Auto,Auto,*,Auto">
+	<Grid RowDefinitions="Auto,Auto,Auto,*,Auto">
 		<Border Grid.Row="0"  BorderBrush="{DynamicResource SystemBaseLowColor}" BorderThickness="0,1">
 			<Grid ColumnDefinitions="*,Auto">
 			<!-- Menu Strip -->
@@ -196,7 +203,106 @@
 		</Grid>
 		</Border>
 		<!-- Buttons and Search Box -->
-		<Grid Grid.Row="1" Margin="8,4" Height="48" ColumnDefinitions="Auto,*,Auto">
+		<!-- Ribbon: common actions that would otherwise be buried in menus -->
+		<Border Grid.Row="1" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource GridLines}">
+			<StackPanel Orientation="Horizontal" Margin="8,4" Spacing="4">
+				<StackPanel.Styles>
+					<Style Selector="Button">
+						<Setter Property="Padding" Value="10,4" />
+						<Setter Property="MinWidth" Value="64" />
+					</Style>
+					<!-- Icon over label, so actions stay legible without inventing
+					     meanings for shapes Libation has no established icon for. -->
+					<Style Selector="Button > StackPanel">
+						<Setter Property="Orientation" Value="Vertical" />
+						<Setter Property="HorizontalAlignment" Value="Center" />
+						<Setter Property="Spacing" Value="3" />
+					</Style>
+					<Style Selector="Button Path">
+						<Setter Property="Width" Value="18" />
+						<Setter Property="Height" Value="18" />
+						<Setter Property="Stretch" Value="Uniform" />
+						<Setter Property="HorizontalAlignment" Value="Center" />
+						<Setter Property="Fill" Value="{DynamicResource IconFill}" />
+					</Style>
+					<Style Selector="Button TextBlock">
+						<Setter Property="FontSize" Value="11" />
+						<Setter Property="HorizontalAlignment" Value="Center" />
+					</Style>
+				</StackPanel.Styles>
+
+				<Button
+					IsVisible="{Binding OneAccount}"
+					IsEnabled="{Binding !ActivelyScanning}"
+					Command="{Binding ScanAccountAsync}"
+					ToolTip.Tip="Scan your Audible library for new books">
+					<StackPanel>
+						<Path Data="{StaticResource ImportIcon}" />
+						<TextBlock Text="Scan" />
+					</StackPanel>
+				</Button>
+				<Button
+					IsVisible="{Binding MultipleAccounts}"
+					IsEnabled="{Binding !ActivelyScanning}"
+					Command="{Binding ScanAllAccountsAsync}"
+					ToolTip.Tip="Scan all accounts for new books">
+					<StackPanel>
+						<Path Data="{StaticResource ImportIcon}" />
+						<TextBlock Text="Scan all" />
+					</StackPanel>
+				</Button>
+
+				<Border Width="1" Margin="4,4" Background="{DynamicResource GridLines}" />
+
+				<Button
+					Command="{Binding BackupAllBooks}"
+					ToolTip.Tip="{Binding BookBackupsToolStripText}">
+					<StackPanel>
+						<Path Data="{StaticResource RibbonDownloadIcon}" />
+						<TextBlock Text="Download" />
+					</StackPanel>
+				</Button>
+				<Button
+					Command="{Binding LiberateVisible}"
+					IsEnabled="{Binding AnyVisibleNotLiberated}"
+					ToolTip.Tip="{Binding LiberateVisibleToolStripText}">
+					<StackPanel>
+						<Path Data="{StaticResource RibbonDownloadIcon}" />
+						<TextBlock Text="Visible" />
+					</StackPanel>
+				</Button>
+				<Button
+					Command="{Binding BackupAllPdfs}"
+					ToolTip.Tip="{Binding PdfBackupsToolStripText}">
+					<StackPanel>
+						<Path Data="{StaticResource PdfDownloadedIcon}" />
+						<TextBlock Text="PDFs" />
+					</StackPanel>
+				</Button>
+
+				<Border Width="1" Margin="4,4" Background="{DynamicResource GridLines}" />
+
+				<Button
+					IsEnabled="{Binding LibraryStats?.HasBookResults, TargetNullValue=false}"
+					Command="{Binding ExportLibraryAsync}"
+					ToolTip.Tip="Export your library to a file">
+					<StackPanel>
+						<Path Data="{StaticResource RibbonExportIcon}" />
+						<TextBlock Text="Export" />
+					</StackPanel>
+				</Button>
+				<Button
+					Command="{Binding ShowSettingsAsync}"
+					ToolTip.Tip="Open settings">
+					<StackPanel>
+						<Path Data="{StaticResource RibbonSettingsIcon}" />
+						<TextBlock Text="Settings" />
+					</StackPanel>
+				</Button>
+			</StackPanel>
+		</Border>
+
+		<Grid Grid.Row="2" Margin="8,4" Height="48" ColumnDefinitions="Auto,*,Auto">
 
 			<Grid.Styles>
 				<Style Selector="TextBox">
@@ -311,7 +417,7 @@
 
 		</Grid>
 		
-		<Border Grid.Row="2" Margin="8,0" BorderThickness="1" BorderBrush="{DynamicResource SystemBaseMediumLowColor}">
+		<Border Grid.Row="3" Margin="8,0" BorderThickness="1" BorderBrush="{DynamicResource SystemBaseMediumLowColor}">
 			<SplitView IsPaneOpen="{Binding QueueOpen}" DisplayMode="Inline" OpenPaneLength="400" MinWidth="400" PanePlacement="Right">
 
 				<!-- Process Queue -->
@@ -333,7 +439,7 @@
 		</Border>
 			
 		<!-- Bottom Status Strip -->
-		<Grid Grid.Row="3" Margin="8" VerticalAlignment="Bottom" ColumnDefinitions="Auto,Auto,*,Auto">
+		<Grid Grid.Row="4" Margin="8" VerticalAlignment="Bottom" ColumnDefinitions="Auto,Auto,*,Auto">
 			<Grid.Styles>
 				<Style Selector="ProgressBar:horizontal">
 					<Setter Property="MinWidth" Value="100" />

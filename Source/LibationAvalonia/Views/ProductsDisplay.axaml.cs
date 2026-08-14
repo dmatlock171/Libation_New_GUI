@@ -159,7 +159,14 @@ public partial class ProductsDisplay : UserControl
 		}
 	}
 
-	/// <summary> Re-applies the saved sort once, after the grid first has rows. </summary>
+	/// <summary>
+	/// Re-applies the saved sort once, after the grid has rows.
+	/// <para/>
+	/// Deferred to an idle dispatcher pass rather than run inline: LoadingRow fires as
+	/// the first of potentially thousands of rows renders, and sorting a collection
+	/// that is still being appended to blocks the UI thread during a library scan.
+	/// Running at ApplicationIdle lets the load burst finish first.
+	/// </summary>
 	private void RestoreSavedSort()
 	{
 		if (sortRestored)
@@ -167,6 +174,13 @@ public partial class ProductsDisplay : UserControl
 
 		sortRestored = true;
 
+		Avalonia.Threading.Dispatcher.UIThread.Post(
+			RestoreSavedSortCore,
+			Avalonia.Threading.DispatcherPriority.ApplicationIdle);
+	}
+
+	private void RestoreSavedSortCore()
+	{
 		try
 		{
 			var savedColumn = Configuration.Instance.GridSortColumn;

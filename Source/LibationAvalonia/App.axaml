@@ -99,6 +99,17 @@
 			<!-- It's called AutoHide, but this is really the mouseover shrink/expand. -->
             <Setter Property="AllowAutoHide" Value="false"/>
 		</Style>
+		<!-- AllowAutoHide alone doesn't reach the DataGrid's internal scroll bars, which
+		     come from the DataGrid's own Fluent theme. Pinning the track size keeps them
+		     at full width instead of collapsing to a sliver until hovered. -->
+		<Style Selector="ScrollBar:vertical">
+			<Setter Property="Width" Value="14" />
+			<Setter Property="MinWidth" Value="14" />
+		</Style>
+		<Style Selector="ScrollBar:horizontal">
+			<Setter Property="Height" Value="14" />
+			<Setter Property="MinHeight" Value="14" />
+		</Style>
 
 		<Style Selector="dialogs|DialogWindow">
 			<Setter Property="WindowDecorations" Value="Full"/>
