@@ -46,9 +46,80 @@ public partial class MainWindow : ReactiveWindow<MainVM>
 		Configuration.Instance.PropertyChanged += Settings_PropertyChanged;
 		Settings_PropertyChanged(this, null);
 		DataContext = new MainVM(this);
+		Configure_QueuePaneWidth();
 #if DEBUG
 		Configure_DebugMenu();
 #endif
+	}
+
+	/// <summary>Width of the process queue pane, in pixels, persisted across restarts.</summary>
+	private const string QueuePaneWidthSetting = "QueuePaneWidth";
+	private const double DefaultQueuePaneWidth = 400;
+
+	/// <summary>
+	/// The queue pane's column in <c>queueSplitGrid</c>. Reached through the grid because
+	/// Avalonia does not generate a field for a named ColumnDefinition the way it does for
+	/// named controls.
+	/// </summary>
+	private ColumnDefinition QueuePaneColumn => queueSplitGrid.ColumnDefinitions[2];
+
+	/// <summary>The width to give the pane column when the queue is open.</summary>
+	private double openQueuePaneWidth = DefaultQueuePaneWidth;
+
+	/// <summary>
+	/// Restores the saved queue pane width and keeps the pane column in step with
+	/// <see cref="MainVM.QueueOpen"/>.
+	/// </summary>
+	private void Configure_QueuePaneWidth()
+	{
+		var saved = Configuration.Instance.GetNonString(defaultValue: DefaultQueuePaneWidth, QueuePaneWidthSetting);
+
+		// Window.Width is NaN until the window is sized, and this runs from the constructor.
+		// Feeding NaN through Clamp into GridLength throws, so only apply the "leave room for
+		// the grid" guard once there is a real width to measure against.
+		var maxSensible = double.IsNaN(Width) ? double.MaxValue : Math.Max(queuePane.MinWidth, Width - 200);
+
+		var width = Math.Clamp(saved, queuePane.MinWidth, maxSensible);
+		if (double.IsNaN(width) || double.IsInfinity(width))
+			width = DefaultQueuePaneWidth;
+
+		openQueuePaneWidth = width;
+
+		if (DataContext is MainVM vm)
+			vm.PropertyChanged += QueueOpen_PropertyChanged;
+
+		ApplyQueuePaneWidth();
+	}
+
+	private void QueueOpen_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+	{
+		if (e.PropertyName is null or nameof(MainVM.QueueOpen))
+			ApplyQueuePaneWidth();
+	}
+
+	/// <summary>
+	/// Collapsing the pane means collapsing its <em>column</em>, not just hiding the Border.
+	/// A column with an explicit pixel width keeps that width whether or not its child is
+	/// visible, which would leave an empty gap where the queue used to be.
+	/// </summary>
+	private void ApplyQueuePaneWidth()
+	{
+		var open = (DataContext as MainVM)?.QueueOpen ?? true;
+
+		QueuePaneColumn.Width = open
+			? new GridLength(openQueuePaneWidth, GridUnitType.Pixel)
+			: new GridLength(0, GridUnitType.Pixel);
+	}
+
+	private void QueueSplitter_DragCompleted(object? sender, Avalonia.Input.VectorEventArgs e)
+	{
+		// Bounds is the rendered width of the pane itself, which is what we want to restore.
+		var width = queuePane.Bounds.Width;
+		if (width < queuePane.MinWidth)
+			return;
+
+		openQueuePaneWidth = width;
+		Configuration.Instance.SetNonString(width, QueuePaneWidthSetting);
 	}
 
 #if DEBUG

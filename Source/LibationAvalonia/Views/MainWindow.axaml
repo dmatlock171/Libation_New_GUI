@@ -8,7 +8,7 @@
 		xmlns:controls="clr-namespace:LibationAvalonia.Controls"
 		mc:Ignorable="d" d:DesignWidth="1850" d:DesignHeight="700"
 		x:Class="LibationAvalonia.Views.MainWindow"
-		Title="Libation (Tipple): Liberate your Library"
+		Title="Libation - Tipple"
 		x:DataType="vm:MainVM"
 		Name="Form1"
 		Icon="/Assets/libation.ico">
@@ -418,24 +418,49 @@
 		</Grid>
 		
 		<Border Grid.Row="3" Margin="8,0" BorderThickness="1" BorderBrush="{DynamicResource SystemBaseMediumLowColor}">
-			<SplitView IsPaneOpen="{Binding QueueOpen}" DisplayMode="Inline" OpenPaneLength="400" MinWidth="400" PanePlacement="Right">
-
-				<!-- Process Queue -->
-				<SplitView.Pane>
-					<Border BorderThickness="1,0,0,0" BorderBrush="{DynamicResource SystemBaseMediumLowColor}">
-						<views:ProcessQueueControl DataContext="{Binding ProcessQueue, Mode=OneTime}"/>
-					</Border>
-				</SplitView.Pane>
+			<!-- A Grid rather than a SplitView: SplitView has a fixed OpenPaneLength and no
+			     resize grip, so the queue pane could not be resized at all. The splitter and
+			     pane column collapse together when the queue is hidden. Column width is saved
+			     and restored in MainWindow.axaml.cs. -->
+			<Grid Name="queueSplitGrid">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" MinWidth="200" />
+					<ColumnDefinition Width="Auto" />
+					<!-- Sized from code-behind; see Configure_QueuePaneWidth. -->
+					<ColumnDefinition Width="Auto" MinWidth="0" />
+				</Grid.ColumnDefinitions>
 
 				<!-- Product Display Grid -->
 				<views:ProductsDisplay
+					Grid.Column="0"
 					Name="productsDisplay"
-					DataContext="{Binding ProductsDisplay, Mode=OneTime}"						
+					DataContext="{Binding ProductsDisplay, Mode=OneTime}"
 					LiberateClicked="ProductsDisplay_LiberateClicked"
 					TagsButtonClicked="ProductsDisplay_TagsButtonClicked"
 					LiberateSeriesClicked="ProductsDisplay_LiberateSeriesClicked"
-					ConvertToMp3Clicked="ProductsDisplay_ConvertToMp3Clicked" />				
-			</SplitView>
+					ConvertToMp3Clicked="ProductsDisplay_ConvertToMp3Clicked" />
+
+				<GridSplitter
+					Grid.Column="1"
+					Name="queueSplitter"
+					Width="5"
+					ResizeDirection="Columns"
+					ResizeBehavior="PreviousAndNext"
+					Background="{DynamicResource SystemBaseMediumLowColor}"
+					IsVisible="{Binding QueueOpen}"
+					DragCompleted="QueueSplitter_DragCompleted" />
+
+				<!-- Process Queue -->
+				<Border
+					Grid.Column="2"
+					Name="queuePane"
+					MinWidth="300"
+					IsVisible="{Binding QueueOpen}"
+					BorderThickness="1,0,0,0"
+					BorderBrush="{DynamicResource SystemBaseMediumLowColor}">
+					<views:ProcessQueueControl DataContext="{Binding ProcessQueue, Mode=OneTime}"/>
+				</Border>
+			</Grid>
 		</Border>
 			
 		<!-- Bottom Status Strip -->
