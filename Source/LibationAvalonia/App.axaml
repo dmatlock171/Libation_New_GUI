@@ -25,6 +25,11 @@
 			</ControlTheme>
 			<x:Double x:Key="DataGridSortIconMinWidth">0</x:Double>
 
+			<!-- The Fluent ScrollBar template sizes its thumb and line buttons from this
+			     resource, so widening the bar means overriding it here rather than setting
+			     Width on the control (which leaves the thumb at the old size). Default is 12. -->
+			<x:Double x:Key="ScrollBarSize">18</x:Double>
+
 			<ResourceDictionary.ThemeDictionaries>
 				<ResourceDictionary x:Key="Light">
 					<SolidColorBrush x:Key="SeriesEntryGridBackgroundBrush" Opacity="0.3" Color="#abffab" />
@@ -97,18 +102,32 @@
 		</Style>
 		<Style Selector="ScrollBar">
 			<!-- It's called AutoHide, but this is really the mouseover shrink/expand. -->
-            <Setter Property="AllowAutoHide" Value="false"/>
+			<Setter Property="AllowAutoHide" Value="false"/>
+		</Style>
+		<!-- AllowAutoHide keeps the bar present, but the Fluent template still draws a sliver:
+		     the thumb is full width the whole time and a RenderTransform scales it down. The
+		     theme undoes that only under its own "^[IsExpanded=true]" style, which the control
+		     sets on pointer-over. IsExpanded is a read-only DirectProperty so it cannot be
+		     forced from here - instead these do what that style does, unconditionally. -->
+		<Style Selector="ScrollBar /template/ Thumb">
+			<Setter Property="RenderTransform" Value="none" />
+		</Style>
+		<Style Selector="ScrollBar /template/ Rectangle#TrackRect">
+			<Setter Property="Opacity" Value="1" />
 		</Style>
 		<!-- AllowAutoHide alone doesn't reach the DataGrid's internal scroll bars, which
-		     come from the DataGrid's own Fluent theme. Pinning the track size keeps them
-		     at full width instead of collapsing to a sliver until hovered. -->
+		     come from the DataGrid's own Fluent theme. Pinning the track size reserves the
+		     gutter, but the *visible* thumb is a separate matter: Fluent keeps the control
+		     at full width and animates the thumb down to a sliver via the :expanded pseudo
+		     class, so the bar still looks collapsed until hovered. The template setters
+		     below pin the thumb and track themselves, which is what actually shows. -->
 		<Style Selector="ScrollBar:vertical">
-			<Setter Property="Width" Value="14" />
-			<Setter Property="MinWidth" Value="14" />
+			<Setter Property="Width" Value="18" />
+			<Setter Property="MinWidth" Value="18" />
 		</Style>
 		<Style Selector="ScrollBar:horizontal">
-			<Setter Property="Height" Value="14" />
-			<Setter Property="MinHeight" Value="14" />
+			<Setter Property="Height" Value="18" />
+			<Setter Property="MinHeight" Value="18" />
 		</Style>
 
 		<Style Selector="dialogs|DialogWindow">
