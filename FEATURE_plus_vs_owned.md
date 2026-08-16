@@ -1,3 +1,17 @@
+> **SUPERSEDED — do not implement.**
+>
+> Upstream shipped this. Migrations `20251020175053_AddIncludedUntil` and
+> `20260107224303_AddIsAudiblePlus` are applied, `LibraryBooks.IsAudiblePlus` and
+> `IncludedUntil` are populated, and the UI exists: a sortable "Included Until" grid
+> column (hidden by default), a searchable `Plus` / `AudiblePlus` field, plus
+> context-menu and queue-status support.
+>
+> Confirmed 2026-08-16 against the live database: 2,194 Plus and 451 owned, with 143
+> carrying an expiry date. Everything proposed below already exists.
+>
+> Kept for the reasoning, and as a reminder that a backlog note can go stale without
+> anything in the source looking different. See ROADMAP.md.
+
 # Feature request draft: show which titles are owned vs Audible Plus
 
 Draft for filing at https://github.com/rmcrackan/Libation/issues

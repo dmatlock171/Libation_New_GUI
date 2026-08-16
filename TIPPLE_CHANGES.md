@@ -48,9 +48,13 @@ than a slower queue.
 ## Main window
 
 ### Ribbon toolbar
-A row of icon-and-label buttons between the menu bar and the filter toolbar, covering the actions
-that are otherwise buried in menus: Scan, Download ALL, Download Books, Download PDFs, Export,
-Settings. Live counts appear as tooltips.
+A row of icon-and-label buttons between the menu bar and the filter toolbar, grouped into captioned
+sections the way Word does: **Library** (Scan), **Download** (ALL, Books, PDFs), **Filter** (At Risk
+and your saved quick filters), **Tools** (Export, Settings). Live counts appear as tooltips.
+
+The whole strip toggles from **View > Show Ribbon** (`ShowRibbon`, on by default) for anyone who
+would rather have the vertical space. The first ten saved quick filters appear as buttons in the
+Filter section; they sit last so a narrow window clips them rather than Scan or Download.
 
 **Why.** The most-used actions in a library manager are "scan" and "download", and both were two
 levels into a menu.
@@ -86,8 +90,31 @@ Menus were regrouped, and Settings gained a **Diagnostics...** entry (see below)
   View menu. Wrapped text still needs somewhere to go, so it pairs with R+ when rows are too short
   for the extra lines.
 - **Surname-first author and narrator columns**, so sorting by author behaves the way a bookshelf does.
+- **Alternating row shading** in the grid and the download queue, adjustable from the **S**
+  steppers beside A and R and stored per theme as `AlternatingRowBackgroundBrush`.
 - **Imprint filtering** (`StripNonPersonAuthors`, off by default) hides brands such as
   "The Great Courses" from the surname columns, where they sort as though they were people.
+
+---
+
+## At risk
+
+A ribbon button that filters to Audible Plus titles you have not downloaded which expire within 90
+days, soonest first. Plus titles leave the catalogue on a date Audible sets, and until now nothing
+in the UI said so beforehand: they simply stopped being in the library.
+
+This library had already lost 95 books that way. Every one was Plus, every one had never been
+downloaded, and not a single owned title has ever vanished.
+
+`IncludedUntil` is now indexed for search, so the same query is available by hand as
+`includeduntil:[20260101 TO 20260401]`, with `Expires` and `Expiry` as aliases. Adding a field to
+the index also made the index itself self-healing: it carries a fingerprint of the indexed field
+names, and rebuilds when that changes, because Lucene answers a query about a field it has never
+seen with silence rather than an error.
+
+**Caveat:** Audible supplies an expiry date for only a fraction of Plus titles — 143 of 2,194 in
+this library. Titles without one cannot be seen by this filter and can disappear without warning.
+See ROADMAP.md.
 
 ---
 
@@ -183,9 +210,8 @@ migrating anything.
 
 ## Not done yet
 
-- **Owned vs Audible Plus.** Libation reads `IsAyce` and computes an expiration date at import,
-  then discards both. Without them there is no way to tell which downloads failed because the
-  title left Plus rather than because something broke. Needs a schema change and an EF migration.
+Fuller detail, with reasoning and priorities, is in ROADMAP.md.
+
 - **Local audiobook import** — bringing non-Audible files into the library. Largest open design
   question in the fork.
 - **Smarter "Locate Audiobooks."** Matching only works when the Audible ASIN appears in the file

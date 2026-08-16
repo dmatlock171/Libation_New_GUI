@@ -1,3 +1,10 @@
+> **PARTLY STALE.** Anything here about adding an `IsPlusTitle` column or an expiration
+> date to the `Book` entity is obsolete: upstream shipped both. See the banner in
+> FEATURE_plus_vs_owned.md, and ROADMAP.md for what is actually outstanding.
+>
+> The 567-unavailable and 94-error figures quoted here came from the old, corrupted
+> database. The clean database has 2 errors.
+
 # Tipple — feature notes and backlog
 
 Working notes for the `gui-status-column` branch of Libation.
