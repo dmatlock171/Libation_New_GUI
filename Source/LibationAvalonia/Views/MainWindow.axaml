@@ -363,10 +363,11 @@
 			<StackPanel Grid.Column="2" Orientation="Horizontal">
 				<Button Name="filterBtn" IsVisible="{Binding !RemoveButtonsVisible}" Command="{Binding FilterBtn}" CommandParameter="{Binding #filterSearchTb.Text}" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="Filter"/>
 
-				<!-- Text size on top, row height below. These are bound to the single-factor
-				     commands, NOT to IncreaseGridFontSize/DecreaseGridFontSize, which step both
-				     factors and made the A and R rows behave identically. Ctrl+Plus/Minus and
-				     Ctrl+wheel keep the zoom-everything behaviour. -->
+				<!-- Text size on top, row height below. Bound to the single-factor commands,
+				     NOT to IncreaseGridFontSize/DecreaseGridFontSize, which step both factors
+				     and made the A and R rows behave identically. A and R are fully decoupled:
+				     A never moves the rows, R has its whole range regardless of font size.
+				     Ctrl+Plus/Minus and Ctrl+wheel keep the zoom-everything behaviour. -->
 				<StackPanel Orientation="Vertical" Margin="10,0,0,0">
 					<StackPanel Orientation="Horizontal">
 						<Button
@@ -386,7 +387,7 @@
 							Margin="4,0,0,0"
 							Padding="10,2"
 							Command="{Binding IncreaseTextOnly}"
-							ToolTip.Tip="Larger grid text (rows grow only if the text no longer fits)"
+							ToolTip.Tip="Larger grid text (row height unchanged)"
 							AutomationProperties.Name="Increase grid text size"
 							Content="A+" />
 					</StackPanel>

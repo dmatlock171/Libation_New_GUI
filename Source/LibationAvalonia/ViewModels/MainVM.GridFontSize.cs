@@ -39,9 +39,9 @@ public partial class MainVM
 			config.GridScaleFactor = DefaultScale;
 	}
 
-	/// <summary> Text size only. Rows grow to fit if the text outgrows them. </summary>
+	/// <summary> Text size only. Row height is left exactly as it was. </summary>
 	public void IncreaseTextOnly() => StepTextOnly(FontScaleStep);
-	/// <summary> Text size only. Rows grow to fit if the text outgrows them. </summary>
+	/// <summary> Text size only. Row height is left exactly as it was. </summary>
 	public void DecreaseTextOnly() => StepTextOnly(-FontScaleStep);
 
 	/// <summary> Restores text size to the default, leaving the row height setting untouched. </summary>
@@ -78,9 +78,9 @@ public partial class MainVM
 	/// Steps both scale factors together — the "zoom everything" gesture behind Ctrl+Plus,
 	/// Ctrl+Minus and Ctrl+wheel, matching what those shortcuts do elsewhere.
 	/// <para>
-	/// The toolbar's A and R buttons deliberately do not use this: they step one factor each.
-	/// Clipping is no longer a reason to keep them tied, because ProductsDisplay sizes rows to
-	/// the larger of the two factors.
+	/// The toolbar's A and R buttons deliberately do not use this: they step one factor each
+	/// and are fully decoupled. Text large enough to outgrow the row will be clipped; use the
+	/// R controls to make room. That is the accepted trade for each control doing one thing.
 	/// </para>
 	/// </summary>
 	private static void StepGridFontScale(float delta)
