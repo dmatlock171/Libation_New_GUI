@@ -44,6 +44,14 @@ public class EntryStatus : ReactiveObject, IComparable
 	}
 	public bool IsSeries { get; }
 	public bool IsEpisode { get; }
+
+	/// <summary>A file on disk that Libation did not download. It is already "downloaded" in
+	/// every sense that matters, so the stoplight would say nothing useful.</summary>
+	public bool IsLocal => Book.Source is BookSource.Local;
+
+	/// <summary>A book recorded as owned with no file at all. Showing "not downloaded" would
+	/// imply a download is pending, when there is deliberately nothing to fetch.</summary>
+	public bool IsCatalogueOnly => Book.IsCatalogueOnly;
 	public bool IsBook => !IsSeries && !IsEpisode;
 	public bool IsUnavailable
 		=> !IsSeries
@@ -129,6 +137,13 @@ public class EntryStatus : ReactiveObject, IComparable
 
 	private string GetTooltip()
 	{
+		// Ahead of the download states below, which do not apply to books Libation cannot fetch.
+		if (IsCatalogueOnly)
+			return "You own this book.\r\nThere is no file, and Libation\r\nwill not try to download it.";
+
+		if (IsLocal)
+			return "Your own file.\r\nAdded from a folder rather\r\nthan downloaded from Audible.";
+
 		if (IsSeries)
 			return Expanded ? "Click to collapse" : "Click to expand";
 

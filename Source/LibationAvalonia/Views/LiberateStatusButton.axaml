@@ -54,6 +54,14 @@
 		</Style>
 	</UserControl.Styles>
 
+	<UserControl.Resources>
+		<!-- Local: a solid page, echoing the ribbon's PDF mark. Filled because you hold the file. -->
+		<StreamGeometry x:Key="LocalFileIcon">M0,0 H42 L60,18 V68 H0 Z M6,8 V60 H54 V26 H34 V8 Z</StreamGeometry>
+		<!-- Catalogue only: the same page outline with no fill weight, plus a gap where the file
+		     would be. Deliberately quieter than every other state in this column. -->
+		<StreamGeometry x:Key="CatalogueOnlyIcon">M0,0 H42 L60,18 V68 H0 Z M8,10 V58 H52 V26 H32 V10 Z M18,30 H42 V38 H18 Z M18,44 H42 V52 H18 Z</StreamGeometry>
+	</UserControl.Resources>
+
 	<Button
 		Name="button"
 		HorizontalAlignment="Stretch"
@@ -76,7 +84,7 @@
 						</Panel>
 
 						<Grid
-							IsVisible="{Binding	!IsSeries}"
+							IsVisible="{Binding StoplightVisible}"
 							HorizontalAlignment="Center"
 							ColumnDefinitions="Auto,Auto">
 							<Canvas Width="29.44" Height="64">
@@ -88,6 +96,16 @@
 							<Path Grid.Column="1" IsVisible="{Binding PdfDownloadedVisible}" Data="{StaticResource PdfDownloadedIcon}"/>
 							<Path Grid.Column="1" IsVisible="{Binding PdfNotDownloadedVisible}" Data="{StaticResource PdfNotDownloadedIcon}"/>
 						</Grid>
+						<!-- Non-Audible books get their own mark rather than a stoplight. A traffic light
+						     answers "has this downloaded yet", which is not a question either of these
+						     has: a local file is already here, and a catalogue entry never will be. -->
+						<Panel IsVisible="{Binding IsLocal}" HorizontalAlignment="Center">
+							<Path Height="64" Stretch="Uniform" Fill="{DynamicResource StoplightGreen}" Data="{StaticResource LocalFileIcon}" />
+						</Panel>
+
+						<Panel IsVisible="{Binding IsCatalogueOnly}" HorizontalAlignment="Center">
+							<Path Height="64" Stretch="Uniform" Data="{StaticResource CatalogueOnlyIcon}" />
+						</Panel>
 					</Panel>
 
 					<Path

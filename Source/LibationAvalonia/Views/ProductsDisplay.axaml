@@ -115,6 +115,8 @@
 								PdfStatus="{Binding Liberate.PdfStatus}"
 								IsUnavailable="{Binding Liberate.IsUnavailable}"
 								IsSeries="{Binding Liberate.IsSeries}"
+								IsLocal="{Binding Liberate.IsLocal}"
+								IsCatalogueOnly="{Binding Liberate.IsCatalogueOnly}"
 								Expanded="{Binding Liberate.Expanded}"
 								Click="LiberateButton_Click" />
 						</DataTemplate>
