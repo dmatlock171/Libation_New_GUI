@@ -230,6 +230,9 @@
 					<Style Selector="Button TextBlock">
 						<Setter Property="FontSize" Value="11" />
 						<Setter Property="HorizontalAlignment" Value="Center" />
+						<!-- The download buttons use two-line labels to stay narrow; centre
+						     both lines rather than left-aligning the second. -->
+						<Setter Property="TextAlignment" Value="Center" />
 					</Style>
 				</StackPanel.Styles>
 
@@ -261,7 +264,7 @@
 					ToolTip.Tip="{Binding BookBackupsToolStripText}">
 					<StackPanel>
 						<Path Data="{StaticResource RibbonDownloadIcon}" />
-						<TextBlock Text="Download" />
+						<TextBlock Text="Download&#x0A;ALL" />
 					</StackPanel>
 				</Button>
 				<Button
@@ -270,7 +273,7 @@
 					ToolTip.Tip="{Binding LiberateVisibleToolStripText}">
 					<StackPanel>
 						<Path Data="{StaticResource RibbonDownloadIcon}" />
-						<TextBlock Text="Visible" />
+						<TextBlock Text="Download&#x0A;Books" />
 					</StackPanel>
 				</Button>
 				<Button
@@ -278,7 +281,7 @@
 					ToolTip.Tip="{Binding PdfBackupsToolStripText}">
 					<StackPanel>
 						<Path Data="{StaticResource PdfDownloadedIcon}" />
-						<TextBlock Text="PDFs" />
+						<TextBlock Text="Download&#x0A;PDFs" />
 					</StackPanel>
 				</Button>
 
