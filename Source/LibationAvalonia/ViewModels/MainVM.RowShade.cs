@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Styling;
+using Avalonia.Threading;
 using ReactiveUI;
 using System;
 using System.Linq;
@@ -26,6 +27,29 @@ public partial class MainVM
 
 	/// <summary>Past this the shading stops being a stripe and starts being a second colour.</summary>
 	private const int RowShadeMax = 0x70;
+
+	/// <summary>
+	/// The shade is stored per theme variant, so switching themes changes which value is in
+	/// force. The readout is computed from the live brush and would otherwise keep showing the
+	/// old theme's number until a button was pressed.
+	/// </summary>
+	private void Configure_RowShade()
+	{
+		if (App.Current is { } app)
+			app.ActualThemeVariantChanged += RowShade_ThemeVariantChanged;
+	}
+
+	private void RowShade_ThemeVariantChanged(object? sender, EventArgs e)
+		// App's own handler reapplies the theme's brushes on this same event. Deferring a
+		// priority lets that finish first, so the readout reports the theme that is now in
+		// force rather than the one being replaced.
+		=> Dispatcher.UIThread.Post(RaiseRowShadeChanged, DispatcherPriority.Background);
+
+	private void RaiseRowShadeChanged()
+	{
+		this.RaisePropertyChanged(nameof(RowShadeText));
+		this.RaisePropertyChanged(nameof(RowShadeTip));
+	}
 
 	public void DarkenAlternatingRows() => StepRowShade(RowShadeStep);
 	public void LightenAlternatingRows() => StepRowShade(-RowShadeStep);
@@ -118,8 +142,7 @@ public partial class MainVM
 			// the theme editor and these buttons stay two views of one setting.
 			theme.Save();
 
-			this.RaisePropertyChanged(nameof(RowShadeText));
-			this.RaisePropertyChanged(nameof(RowShadeTip));
+			RaiseRowShadeChanged();
 		}
 		catch (Exception ex)
 		{

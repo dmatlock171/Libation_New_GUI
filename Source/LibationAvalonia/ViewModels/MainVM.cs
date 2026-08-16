@@ -34,6 +34,7 @@ public partial class MainVM : ViewModelBase
 		Configure_Import();
 		Configure_Liberate();
 		Configure_ProcessQueue();
+		Configure_RowShade();
 		Configure_ScanAuto();
 		Configure_Settings();
 		Configure_ThemeLibrary();
