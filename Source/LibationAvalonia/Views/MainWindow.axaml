@@ -313,6 +313,18 @@
 					<!-- Library -->
 					<StackPanel Classes="ribbonSection">
 						<StackPanel Classes="ribbonSectionButtons">
+							<!-- With no account there is nothing to scan and both Scan buttons hide, which
+							     left the Library section as a bare caption: it reads as a broken ribbon
+							     rather than a setup step. Says what the menu already says. -->
+							<Button
+								IsVisible="{Binding !AnyAccounts}"
+								Command="{Binding AddAccountsAsync}"
+								ToolTip.Tip="Add an Audible account so Libation can scan your library">
+								<StackPanel>
+									<Path Data="{StaticResource RibbonScanIcon}" />
+									<TextBlock Text="Add&#x0A;Account" />
+								</StackPanel>
+							</Button>
 							<Button
 								IsVisible="{Binding OneAccount}"
 								IsEnabled="{Binding !ActivelyScanning}"
