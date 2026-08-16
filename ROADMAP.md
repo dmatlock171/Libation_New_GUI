@@ -87,6 +87,11 @@ problem this library has.
 
 ## Smaller things
 
+- **Ribbon icon size adjuster.** The icons are pinned to 18px tall by a style setter in
+  `MainWindow.axaml`. Worth exposing as a setting, and possibly as a fourth stepper alongside
+  A / R / S, so the ribbon can be scaled for high-DPI displays or shrunk when the vertical space
+  matters more than the affordance. Only the height needs to move — width follows the artwork
+  now — so it is the same shape of change as the S stepper, minus the theme plumbing.
 - `RibbonQuickFilterCount` is 10. Drop to 5 if the ribbon crowds on a narrow window.
 - The Status button is flatter now that its disabled state no longer paints a background. If that
   reads as too flat, add a border rather than restoring the fill.
