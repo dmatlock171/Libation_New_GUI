@@ -395,7 +395,10 @@
 			</StackPanel>
 		</Border>
 
-		<Grid Grid.Row="2" Margin="8,4" Height="48" ColumnDefinitions="Auto,*,Auto">
+		<!-- MinHeight rather than a fixed 48: the row is Auto in the parent, and the A/R/S
+		     steppers are three rows tall now. A fixed height clipped the third one, which
+		     rendered but had nowhere to go. -->
+		<Grid Grid.Row="2" Margin="8,4" MinHeight="48" ColumnDefinitions="Auto,*,Auto">
 
 			<Grid.Styles>
 				<Style Selector="TextBox">
