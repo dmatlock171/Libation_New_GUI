@@ -76,7 +76,10 @@ Menus were regrouped, and Settings gained a **Diagnostics...** entry (see below)
     clipped; the fix is to press R+. Sizing rows automatically to fit the text was tried and
     removed: it left A still moving the rows, and left R doing nothing at all whenever the font
     scale happened to be ahead of it.
-- **Text wrapping** in columns too narrow to fit their contents (`GridTextWrapping`, off by default).
+- **Text wrapping** in columns too narrow to fit their contents (`GridTextWrapping`, off by
+  default), toggled from the **W** button beside the A and R controls as well as from the View
+  menu. Wrapped text still needs somewhere to go, so it pairs with R+ when rows are too short for
+  the extra lines.
 - **Surname-first author and narrator columns**, so sorting by author behaves the way a bookshelf does.
 - **Imprint filtering** (`StripNonPersonAuthors`, off by default) hides brands such as
   "The Great Courses" from the surname columns, where they sort as though they were people.

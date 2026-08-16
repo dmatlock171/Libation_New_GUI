@@ -415,6 +415,22 @@
 					</StackPanel>
 				</StackPanel>
 
+				<!-- Same command as View > Wrap text in narrow columns; this is just a
+				     reachable home for it next to the controls it interacts with. OneWay
+				     because Configuration owns the value: the ToggleButton flips its own
+				     IsChecked on click, then the binding puts it back in step with the
+				     setting, which keeps this button, the menu item and Settings agreeing. -->
+				<ToggleButton
+					Margin="6,0,0,0"
+					Padding="10,2"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Center"
+					Command="{Binding ToggleGridTextWrapping}"
+					IsChecked="{Binding GridTextWrapping, Mode=OneWay}"
+					ToolTip.Tip="Wrap text that is too wide for its column, instead of clipping it. Wrapped text still needs the room to show: use R+ if rows are too short for the extra lines."
+					AutomationProperties.Name="Toggle text wrapping in grid columns"
+					Content="W" />
+
 				<Button Margin="10,0,0,0" Padding="4,2" Height="40" VerticalAlignment="Center" Command="{Binding ToggleQueueHideBtn}">
 					<Path Width="20" Height="20" Stretch="Uniform" Fill="{DynamicResource IconFill}" Data="{StaticResource	LeftArrows}">
 						<Path.RenderTransform>
