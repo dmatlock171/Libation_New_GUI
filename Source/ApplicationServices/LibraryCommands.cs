@@ -193,6 +193,13 @@ public static class LibraryCommands
 		}
 	}
 
+	/// <summary>Take the import gate. Exposed so other importers in this assembly serialise
+	/// against library scans rather than writing to the same tables concurrently.</summary>
+	internal static Task WaitImportGateAsync(CancellationToken cancellationToken = default)
+		=> ImportGate.WaitAsync(cancellationToken);
+
+	internal static void ReleaseImportGate() => ImportGate.Release();
+
 	public static async Task<int> ImportSingleToDbAsync(AudibleApi.Common.Item item, string accountId, string localeName)
 	{
 		await ImportGate.WaitAsync();
@@ -465,7 +472,9 @@ public static class LibraryCommands
 		}
 	}
 
-	static int DoDbSizeChangeOperation(Action<LibationContext> action)
+	/// <summary>Internal so other importers in this assembly can add or remove books and still
+	/// raise LibrarySizeChanged, which is what refreshes the grid.</summary>
+	internal static int DoDbSizeChangeOperation(Action<LibationContext> action)
 	{
 		try
 		{
