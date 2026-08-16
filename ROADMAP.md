@@ -85,6 +85,39 @@ books, missing-file handling, cover art. See `LOCAL_IMPORT_PROPOSAL.md`.
 database has 2. A per-book failure-reason column is still nice, but it is no longer solving a
 problem this library has.
 
+## Not scoped yet
+
+### Wishlist with cross-store price comparison
+Keep a list of audiobooks you want, and show what each one costs on Audible, Chirp, Downpour,
+Libro.fm and friends so you can buy where it is cheapest. Chirp in particular is deal-driven, so
+the same title swings a long way in price.
+
+**Start by looking at what exists.** Libation already talks to Audible's wishlist:
+`api.GetWishListProductsAsync(...)` at `LibationUiBase\SeriesView\SeriesItem.cs:80`, with a
+`WishlistButton` beside it — but only inside the series view. A general wishlist may be less new
+code than it looks, and `BookSource.CatalogueOnly` is already close to the right row shape for a
+book you do not own yet.
+
+**The price side is the hard part, and it is the same problem as store integration.** None of these
+stores publish a public pricing API. Reading prices by driving their pages is exactly what
+`LOCAL_IMPORT_PROPOSAL.md` argues against for imports: a terms-of-service question rather than a
+copyright one, breaking whenever markup changes, and multiplying per store forever. That reasoning
+does not weaken just because the payload is a number rather than a file.
+
+Worth checking before committing to anything:
+
+- Whether any of them run an affiliate or partner programme with a documented product feed. That
+  is the one route that is both allowed and stable. Chirp is BookBub, so start there.
+- Whether Audible's own API exposes catalogue pricing rather than just library contents. The
+  catalogue call already used for better-quality scans may carry it.
+
+**The version that always works:** store the title and ASIN/ISBN, and give each wishlist row a
+button per store that opens a pre-filled search. No scraping, no credentials, nothing to break —
+you get one click to a price instead of an automatic comparison. Worth building first regardless,
+since the fancy version degrades to exactly this whenever a feed is unavailable.
+
+---
+
 ---
 
 ## Upstream
