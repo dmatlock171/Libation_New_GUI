@@ -22,6 +22,9 @@
 		     down off the end of it and back to the left margin. Drawn as four solid subpaths
 		     with no overlaps, so it fills predictably at any size. -->
 		<StreamGeometry x:Key="WrapTextIcon">M0,0 H64 V8 H0 Z M0,16 H50 V24 H0 Z M56,16 H64 V40 H56 Z M26,32 H64 V40 H26 V48 L8,36 L26,24 Z</StreamGeometry>
+		<!-- At risk: an hourglass. Plus titles run out of time whether or not you download
+		     them, and this is the only ribbon action about something expiring. -->
+		<StreamGeometry x:Key="RibbonAtRiskIcon">M10,0 H54 V10 L36,32 L54,54 V64 H10 V54 L28,32 L10,10 Z</StreamGeometry>
 		<!-- No wrapping: lines running straight off the right edge, i.e. one long line
 		     clipped by the column rather than folded onto the next. Shown when wrapping is
 		     already on, because the button advertises what pressing it will do. -->
@@ -293,6 +296,15 @@
 					</StackPanel>
 				</Button>
 
+				<Button
+					Command="{Binding FilterAtRisk}"
+					ToolTip.Tip="{Binding AtRiskTip}">
+					<StackPanel>
+						<Path Data="{StaticResource RibbonAtRiskIcon}" />
+						<TextBlock Text="At&#x0A;Risk" />
+					</StackPanel>
+				</Button>
+
 				<Border Width="1" Margin="4,4" Background="{DynamicResource GridLines}" />
 
 				<Button
@@ -312,6 +324,33 @@
 						<TextBlock Text="Settings" />
 					</StackPanel>
 				</Button>
+
+				<!-- Saved quick filters, mirrored from the Quick Filters menu. Last in the
+				     ribbon deliberately: if the window is too narrow for everything, these are
+				     the ones that should clip rather than Scan or Download. IsVisible keeps the
+				     separator from appearing on its own when no filters are saved. -->
+				<Border
+					Width="1" Margin="4,4"
+					Background="{DynamicResource GridLines}"
+					IsVisible="{Binding AnyRibbonQuickFilters}" />
+				<ItemsControl ItemsSource="{Binding RibbonQuickFilters}">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<StackPanel Orientation="Horizontal" Spacing="4" />
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate DataType="vm:QuickFilterButton">
+							<Button
+								Command="{Binding Apply}"
+								ToolTip.Tip="{Binding Tip}"
+								VerticalAlignment="Stretch"
+								VerticalContentAlignment="Center">
+								<TextBlock Text="{Binding Label}" />
+							</Button>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
 			</StackPanel>
 		</Border>
 

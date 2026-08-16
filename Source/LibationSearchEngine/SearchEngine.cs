@@ -72,7 +72,12 @@ public class SearchEngine
 			{ FieldType.Number, lb => lb.Book.UserDefinedItem.LastDownloaded.ToLuceneString(), nameof(UserDefinedItem.LastDownloaded), "LastDownload" },
 		{ FieldType.Number, lb => lb.Book.UserDefinedItem.LastDownloadedFormat?.BitRate.ToLuceneString(), "Bitrate", "DownloadedBitrate" },
 		{ FieldType.Number, lb => lb.Book.UserDefinedItem.LastDownloadedFormat?.SampleRate.ToLuceneString(), "SampleRate", "DownloadedSampleRate" },
-		{ FieldType.Number, lb => lb.DateAdded.ToLuceneString(), nameof(LibraryBook.DateAdded) }
+		{ FieldType.Number, lb => lb.DateAdded.ToLuceneString(), nameof(LibraryBook.DateAdded) },
+		// Audible Plus titles leave the catalogue on this date. Indexed so they can be found
+		// before they go rather than after: "includeduntil:[20260101 TO 20260401]".
+		// Titles with no expiry index as empty and fall outside every range, which is correct —
+		// Audible supplies a date for only a fraction of Plus titles.
+		{ FieldType.Number, lb => lb.IncludedUntil.ToLuceneString(), nameof(LibraryBook.IncludedUntil), "Expires", "Expiry" }
 	};
 	#endregion
 
