@@ -330,11 +330,21 @@ public partial class ProductsDisplay : UserControl
 	private readonly Style fontSizeH2Style;
 	private readonly Setter fontSizeH2Setter = new() { Property = TextBlock.FontSizeProperty };
 
+	// The two scale factors are independent settings, but row height cannot be: rows are a
+	// fixed DataGridCell.Height, so text larger than the row simply clips. Both setters
+	// therefore record their value and hand off to applyRowScale, which sizes rows to
+	// whichever factor is larger. Row height follows GridScaleFactor until the font outgrows
+	// it, at which point the rows grow to keep the text readable.
+	private double currentGridScale = 1;
+	private double currentFontScale = 1;
+
 	private void setFontScale(double scaleFactor)
 	{
 		const double TextBlockFontSize = 11;
 		const double H1FontSize = 14;
 		const double H2FontSize = 12;
+
+		currentFontScale = scaleFactor;
 
 		fontSizeSetter.Value = TextBlockFontSize * scaleFactor;
 		fontSizeH1Setter.Value = H1FontSize * scaleFactor;
@@ -346,6 +356,8 @@ public partial class ProductsDisplay : UserControl
 		productsGrid.Styles.Add(fontSizeStyle);
 		productsGrid.Styles.Add(fontSizeH1Style);
 		productsGrid.Styles.Add(fontSizeH2Style);
+
+		applyRowScale();
 	}
 
 	[PropertyChangeFilter(nameof(Configuration.GridTextWrapping))]
@@ -365,9 +377,24 @@ public partial class ProductsDisplay : UserControl
 
 	private void setGridScale(double scaleFactor)
 	{
+		currentGridScale = scaleFactor;
+		applyRowScale();
+	}
+
+	/// <summary>
+	/// Sizes rows, and the two fixed-width columns, to the larger of the row scale and the font
+	/// scale. Taking the max is what lets the A and R controls be independent: R sets the row
+	/// height you want and acts as a floor, while a font too large to fit pushes the rows taller
+	/// rather than being clipped by them. The cover and Liberate columns follow the same figure
+	/// so a taller row does not leave a squashed cover image next to it.
+	/// </summary>
+	private void applyRowScale()
+	{
 		const float BaseRowHeight = 80;
 		const float BaseLiberateWidth = 75;
 		const float BaseCoverWidth = 80;
+
+		var scaleFactor = double.Max(currentGridScale, currentFontScale);
 
 		foreach (var column in productsGrid.Columns)
 		{

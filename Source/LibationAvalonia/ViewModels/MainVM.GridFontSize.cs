@@ -39,10 +39,19 @@ public partial class MainVM
 			config.GridScaleFactor = DefaultScale;
 	}
 
-	/// <summary> Text size only. Leaves row height untouched, so text may clip. </summary>
+	/// <summary> Text size only. Rows grow to fit if the text outgrows them. </summary>
 	public void IncreaseTextOnly() => StepTextOnly(FontScaleStep);
-	/// <summary> Text size only. Leaves row height untouched, so text may clip. </summary>
+	/// <summary> Text size only. Rows grow to fit if the text outgrows them. </summary>
 	public void DecreaseTextOnly() => StepTextOnly(-FontScaleStep);
+
+	/// <summary> Restores text size to the default, leaving the row height setting untouched. </summary>
+	public void ResetTextOnly()
+	{
+		var config = Configuration.Instance;
+
+		if (config.GridFontScaleFactor != DefaultScale)
+			config.GridFontScaleFactor = DefaultScale;
+	}
 
 	private static void StepTextOnly(float delta)
 	{
@@ -66,9 +75,13 @@ public partial class MainVM
 	}
 
 	/// <summary>
-	/// Steps the font scale and the row-height scale together. Row height is a fixed
-	/// DataGridCell.Height derived from GridScaleFactor, so growing the font on its own
-	/// clips the text inside rows that don't grow with it.
+	/// Steps both scale factors together — the "zoom everything" gesture behind Ctrl+Plus,
+	/// Ctrl+Minus and Ctrl+wheel, matching what those shortcuts do elsewhere.
+	/// <para>
+	/// The toolbar's A and R buttons deliberately do not use this: they step one factor each.
+	/// Clipping is no longer a reason to keep them tied, because ProductsDisplay sizes rows to
+	/// the larger of the two factors.
+	/// </para>
 	/// </summary>
 	private static void StepGridFontScale(float delta)
 	{
