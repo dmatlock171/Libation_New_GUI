@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Threading;
+using LibationAvalonia.Themes;
 using ReactiveUI;
 using System;
 using System.Linq;
@@ -134,12 +135,21 @@ public partial class MainVM
 	{
 		try
 		{
-			var theme = ChardonnayTheme.GetLiveTheme();
+			// Must be the persister's Target, not ChardonnayTheme.GetLiveTheme(). The persister
+			// is what subscribes to Updated and writes ChardonnayTheme.json; GetLiveTheme hands
+			// back a fresh, unattached instance whose Save() therefore repainted the screen and
+			// persisted nothing, so the shade reverted on the next launch. Same idiom the theme
+			// editor uses.
+			using var persister = ChardonnayThemePersister.Create();
+
+			if (persister?.Target is not { } theme)
+			{
+				Serilog.Log.Logger.Warning("Could not open the theme file; row shading was not saved.");
+				return;
+			}
+
 			theme.SetColor(variant, AlternatingRowBrushKey, color);
 			theme.ApplyTheme(variant);
-
-			// Persist. Goes to ChardonnayTheme.json alongside every other themed colour, so
-			// the theme editor and these buttons stay two views of one setting.
 			theme.Save();
 
 			RaiseRowShadeChanged();
