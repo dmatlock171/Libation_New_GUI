@@ -85,6 +85,8 @@ books, missing-file handling, cover art. See `LOCAL_IMPORT_PROPOSAL.md`.
 database has 2. A per-book failure-reason column is still nice, but it is no longer solving a
 problem this library has.
 
+---
+
 ## Not scoped yet
 
 ### Wishlist with cross-store price comparison
@@ -115,8 +117,6 @@ Worth checking before committing to anything:
 button per store that opens a pre-filled search. No scraping, no credentials, nothing to break —
 you get one click to a price instead of an automatic comparison. Worth building first regardless,
 since the fancy version degrades to exactly this whenever a feed is unavailable.
-
----
 
 ---
 
