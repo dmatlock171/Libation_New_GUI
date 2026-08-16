@@ -409,9 +409,13 @@
 						</StackPanel>
 						<TextBlock Classes="ribbonSection" Text="Tools" />
 					</StackPanel>
+					<!-- Closes the ribbon off from the filter area. Wider margin than the dividers
+					     between sections, so the boundary between the two halves of the row reads
+					     as more than just another section break. -->
+					<Border Classes="ribbonDivider" Margin="12,2,4,2" />
 				</StackPanel>
 
-				<Grid Grid.Column="1" Name="filterArea" ColumnDefinitions="Auto,*">
+				<Grid Grid.Column="1" Name="filterArea" Margin="6,0,0,0" ColumnDefinitions="Auto,*">
 
 				<!-- Search syntax help. Lists every searchable field, which now includes
 				     includeduntil/Expires, so it is the only place that documents them. -->
