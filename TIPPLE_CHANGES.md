@@ -210,3 +210,32 @@ directory does not exist — Settings → Diagnostics will say so if that happen
 
 The full solution is `Source/Libation.slnx`. Classic (WinForms) and Chardonnay (Avalonia) share
 the core projects, so changes below the UI layer affect both.
+
+### Antivirus false positives on your own build
+
+A locally built executable is unsigned and has no reputation with the big antivirus vendors, and
+heuristics like Norton's SONAR and Download Insight flag on exactly that, independent of what the
+code does. Official Libation releases are signed, which is why they do not trip it. Expect it to
+recur after every rebuild, because each build produces a new hash. No code change fixes this.
+
+**Norton.** The notification that appears has no "allow" option because the file has already been
+removed by the time you see it. To recover the current build: Norton → **Security** → **History**,
+set the **Show** dropdown to **Quarantine**, select the item, **Options**, then **Create exception
+& restore** (older versions: **Restore & exclude this file**).
+
+To stop it recurring, note that Norton keeps *two* separate exclusion lists and adding to only the
+first will not help. Under Settings → **Antivirus** → **Scans and Risks**, add the build output to
+both **Items to Exclude from Scans** and **Items to Exclude from Auto-Protect, SONAR and Download
+Intelligence Detection**:
+
+```
+<repo>\Source\bin
+<repo>\Source\obj
+```
+
+Exclude the folders rather than individual files — a file exclusion is keyed to a hash that the
+next build invalidates. If the quarantine list is empty and the file is instead blocked at launch,
+that is Download Insight rather than Auto-Protect, and the second list is the one that governs it.
+
+Excluded folders are not scanned at all, so keep this scoped to the build output rather than the
+repository root or your user profile.
