@@ -151,7 +151,11 @@ public static class LocalImportCommands
 		await LibraryCommands.WaitImportGateAsync(cancellationToken);
 		try
 		{
-			return LibraryCommands.DoDbSizeChangeOperation(context =>
+			// DoDbSizeChangeOperation returns EF's changed-row count. One book is a Books row, a
+			// LibraryBooks row, a UserDefinedItem, a link row per contributor, and any contributor
+			// that did not already exist -- so three books reported as nineteen. Callers asked how
+			// many books were added.
+			var qtyChanges = LibraryCommands.DoDbSizeChangeOperation(context =>
 			{
 				var contributors = new ContributorCache(context);
 				var now = DateTime.UtcNow;
@@ -178,6 +182,8 @@ public static class LocalImportCommands
 					context.LibraryBooks.Add(new LibraryBook(book, now, LibraryBook.LocalAccount));
 				}
 			});
+
+			return qtyChanges == 0 ? 0 : entries.Count;
 		}
 		finally
 		{
@@ -246,7 +252,8 @@ public static class LocalImportCommands
 		}
 
 		Log.Logger.Information("Imported {Count} local audiobooks", toRegister.Count);
-		return qtyChanges;
+		// Books, not the row count. See the note in AddCatalogueEntriesAsync.
+		return toRegister.Count;
 	}
 
 	/// <summary>
