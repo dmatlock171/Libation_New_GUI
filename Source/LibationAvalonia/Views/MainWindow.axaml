@@ -113,7 +113,7 @@
 	<!-- MainWindow isn't a DialogWindow, so it doesn't pick up the outline from the
 	     DialogWindow template and needs its own. -->
 	<Border BorderThickness="2" BorderBrush="{DynamicResource WindowOutline}">
-	<Grid RowDefinitions="Auto,Auto,Auto,*,Auto">
+	<Grid RowDefinitions="Auto,Auto,*,Auto">
 		<Border Grid.Row="0"  BorderBrush="{DynamicResource SystemBaseLowColor}" BorderThickness="0,1">
 			<Grid ColumnDefinitions="*,Auto">
 			<!-- Menu Strip -->
@@ -217,433 +217,433 @@
 		</Grid>
 		</Border>
 		<!-- Buttons and Search Box -->
-		<!-- Ribbon: common actions that would otherwise be buried in menus.
-		     Grouped like Word: each section is its own row of buttons with a caption
-		     underneath, separated by a rule. IsVisible lets it be hidden entirely -->
-		<Border
-			Grid.Row="1"
-			IsVisible="{Binding ShowRibbon}"
-			BorderThickness="0,0,0,1" BorderBrush="{DynamicResource GridLines}">
-			<StackPanel Orientation="Horizontal" Margin="8,4" Spacing="4">
-				<StackPanel.Styles>
-					<Style Selector="Button">
-						<Setter Property="Padding" Value="10,4" />
-						<Setter Property="MinWidth" Value="64" />
-					</Style>
-					<!-- Icon over label, so actions stay legible without inventing
-					     meanings for shapes Libation has no established icon for. -->
-					<Style Selector="Button > StackPanel">
-						<Setter Property="Orientation" Value="Vertical" />
-						<Setter Property="HorizontalAlignment" Value="Center" />
-						<Setter Property="Spacing" Value="3" />
-					</Style>
-					<!-- Height only, no Width. With Uniform stretch inside a fixed 18x18 box, a
-					     geometry wider than it is tall fits to the width and comes out short:
-					     the Settings bars rendered 15px against everyone else's 18px. Constraining
-					     only the height makes every icon the same height and lets the width follow
-					     the artwork. -->
-					<Style Selector="Button Path">
-						<Setter Property="Height" Value="18" />
-						<Setter Property="Stretch" Value="Uniform" />
-						<Setter Property="HorizontalAlignment" Value="Center" />
-						<Setter Property="Fill" Value="{DynamicResource IconFill}" />
-					</Style>
-					<Style Selector="Button TextBlock">
-						<Setter Property="FontSize" Value="11" />
-						<Setter Property="HorizontalAlignment" Value="Center" />
-						<!-- The download buttons use two-line labels to stay narrow; centre
-						     both lines rather than left-aligning the second. -->
-						<Setter Property="TextAlignment" Value="Center" />
-					</Style>
-					<!-- Section caption. Quiet on purpose: it names the group without
-					     competing with the buttons above it. -->
-					<Style Selector="TextBlock.ribbonSection">
-						<Setter Property="FontSize" Value="10" />
-						<Setter Property="Opacity" Value="0.6" />
-						<Setter Property="HorizontalAlignment" Value="Center" />
-						<Setter Property="Margin" Value="0,3,0,0" />
-					</Style>
-					<Style Selector="StackPanel.ribbonSection">
-						<Setter Property="Orientation" Value="Vertical" />
-					</Style>
-					<Style Selector="StackPanel.ribbonSectionButtons">
-						<Setter Property="Orientation" Value="Horizontal" />
-						<Setter Property="Spacing" Value="4" />
-					</Style>
-					<Style Selector="Border.ribbonDivider">
-						<Setter Property="Width" Value="1" />
-						<Setter Property="Margin" Value="4,2" />
-						<Setter Property="Background" Value="{DynamicResource GridLines}" />
-					</Style>
-				</StackPanel.Styles>
+		<!-- Ribbon and filter share one row. The ribbon takes its natural width on the left,
+		     the filter box stretches into whatever is left, and the grid size steppers sit on
+		     the right. Show Ribbon hides only the button sections, not the filter. -->
+		<Border Grid.Row="1" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource GridLines}">
+			<Grid Margin="8,4" MinHeight="48" ColumnDefinitions="Auto,*,Auto">
 
-				<!-- Library -->
-				<StackPanel Classes="ribbonSection">
-					<StackPanel Classes="ribbonSectionButtons">
-						<Button
-							IsVisible="{Binding OneAccount}"
-							IsEnabled="{Binding !ActivelyScanning}"
-							Command="{Binding ScanAccountAsync}"
-							ToolTip.Tip="Scan your Audible library for new books">
-							<StackPanel>
-								<Path Data="{StaticResource ImportIcon}" />
-								<TextBlock Text="Scan" />
-							</StackPanel>
-						</Button>
-						<Button
-							IsVisible="{Binding MultipleAccounts}"
-							IsEnabled="{Binding !ActivelyScanning}"
-							Command="{Binding ScanAllAccountsAsync}"
-							ToolTip.Tip="Scan all accounts for new books">
-							<StackPanel>
-								<Path Data="{StaticResource ImportIcon}" />
-								<TextBlock Text="Scan all" />
-							</StackPanel>
-						</Button>
+				<Grid.Styles>
+					<!-- Scoped to the filter area so the ribbon's own button style does not
+					     inflate them, and theirs does not shrink the ribbon. -->
+						<Style Selector="Grid#filterArea TextBox">
+							<Setter Property="MinHeight" Value="10" />
+						</Style>
+						<Style Selector="Grid#filterArea Button">
+							<Setter Property="Padding" Value="12,2" />
+							<Setter Property="Margin" Value="10,0,0,0" />
+							<Setter Property="HorizontalContentAlignment" Value="Center" />
+							<Setter Property="VerticalContentAlignment" Value="Center" />
+						</Style>
+				</Grid.Styles>
+
+				<StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="4" IsVisible="{Binding ShowRibbon}">
+					<StackPanel.Styles>
+						<Style Selector="Button">
+							<Setter Property="Padding" Value="10,4" />
+							<Setter Property="MinWidth" Value="64" />
+						</Style>
+						<!-- Icon over label, so actions stay legible without inventing
+						     meanings for shapes Libation has no established icon for. -->
+						<Style Selector="Button > StackPanel">
+							<Setter Property="Orientation" Value="Vertical" />
+							<Setter Property="HorizontalAlignment" Value="Center" />
+							<Setter Property="Spacing" Value="3" />
+						</Style>
+						<!-- Height only, no Width. With Uniform stretch inside a fixed 18x18 box, a
+						     geometry wider than it is tall fits to the width and comes out short:
+						     the Settings bars rendered 15px against everyone else's 18px. Constraining
+						     only the height makes every icon the same height and lets the width follow
+						     the artwork. -->
+						<Style Selector="Button Path">
+							<Setter Property="Height" Value="18" />
+							<Setter Property="Stretch" Value="Uniform" />
+							<Setter Property="HorizontalAlignment" Value="Center" />
+							<Setter Property="Fill" Value="{DynamicResource IconFill}" />
+						</Style>
+						<Style Selector="Button TextBlock">
+							<Setter Property="FontSize" Value="11" />
+							<Setter Property="HorizontalAlignment" Value="Center" />
+							<!-- The download buttons use two-line labels to stay narrow; centre
+							     both lines rather than left-aligning the second. -->
+							<Setter Property="TextAlignment" Value="Center" />
+						</Style>
+						<!-- Section caption. Quiet on purpose: it names the group without
+						     competing with the buttons above it. -->
+						<Style Selector="TextBlock.ribbonSection">
+							<Setter Property="FontSize" Value="10" />
+							<Setter Property="Opacity" Value="0.6" />
+							<Setter Property="HorizontalAlignment" Value="Center" />
+							<Setter Property="Margin" Value="0,3,0,0" />
+						</Style>
+						<Style Selector="StackPanel.ribbonSection">
+							<Setter Property="Orientation" Value="Vertical" />
+						</Style>
+						<Style Selector="StackPanel.ribbonSectionButtons">
+							<Setter Property="Orientation" Value="Horizontal" />
+							<Setter Property="Spacing" Value="4" />
+						</Style>
+						<Style Selector="Border.ribbonDivider">
+							<Setter Property="Width" Value="1" />
+							<Setter Property="Margin" Value="4,2" />
+							<Setter Property="Background" Value="{DynamicResource GridLines}" />
+						</Style>
+					</StackPanel.Styles>
+
+					<!-- Library -->
+					<StackPanel Classes="ribbonSection">
+						<StackPanel Classes="ribbonSectionButtons">
+							<Button
+								IsVisible="{Binding OneAccount}"
+								IsEnabled="{Binding !ActivelyScanning}"
+								Command="{Binding ScanAccountAsync}"
+								ToolTip.Tip="Scan your Audible library for new books">
+								<StackPanel>
+									<Path Data="{StaticResource ImportIcon}" />
+									<TextBlock Text="Scan" />
+								</StackPanel>
+							</Button>
+							<Button
+								IsVisible="{Binding MultipleAccounts}"
+								IsEnabled="{Binding !ActivelyScanning}"
+								Command="{Binding ScanAllAccountsAsync}"
+								ToolTip.Tip="Scan all accounts for new books">
+								<StackPanel>
+									<Path Data="{StaticResource ImportIcon}" />
+									<TextBlock Text="Scan all" />
+								</StackPanel>
+							</Button>
+						</StackPanel>
+						<TextBlock Classes="ribbonSection" Text="Library" />
 					</StackPanel>
-					<TextBlock Classes="ribbonSection" Text="Library" />
-				</StackPanel>
-				<Border Classes="ribbonDivider" />
+					<Border Classes="ribbonDivider" />
 
-				<!-- Download -->
-				<StackPanel Classes="ribbonSection">
-					<StackPanel Classes="ribbonSectionButtons">
-						<Button
-							Command="{Binding BackupAllBooks}"
-							ToolTip.Tip="{Binding BookBackupsToolStripText}">
-							<StackPanel>
-								<Path Data="{StaticResource RibbonDownloadIcon}" />
-								<TextBlock Text="Download&#x0A;ALL" />
-							</StackPanel>
-						</Button>
-						<Button
-							Command="{Binding LiberateVisible}"
-							IsEnabled="{Binding AnyVisibleNotLiberated}"
-							ToolTip.Tip="{Binding LiberateVisibleToolStripText}">
-							<StackPanel>
-								<Path Data="{StaticResource RibbonDownloadIcon}" />
-								<TextBlock Text="Download&#x0A;Books" />
-							</StackPanel>
-						</Button>
-						<Button
-							Command="{Binding BackupAllPdfs}"
-							ToolTip.Tip="{Binding PdfBackupsToolStripText}">
-							<StackPanel>
-								<Path Data="{StaticResource PdfDownloadedIcon}" />
-								<TextBlock Text="Download&#x0A;PDFs" />
-							</StackPanel>
-						</Button>
+					<!-- Download -->
+					<StackPanel Classes="ribbonSection">
+						<StackPanel Classes="ribbonSectionButtons">
+							<Button
+								Command="{Binding BackupAllBooks}"
+								ToolTip.Tip="{Binding BookBackupsToolStripText}">
+								<StackPanel>
+									<Path Data="{StaticResource RibbonDownloadIcon}" />
+									<TextBlock Text="Download&#x0A;ALL" />
+								</StackPanel>
+							</Button>
+							<Button
+								Command="{Binding LiberateVisible}"
+								IsEnabled="{Binding AnyVisibleNotLiberated}"
+								ToolTip.Tip="{Binding LiberateVisibleToolStripText}">
+								<StackPanel>
+									<Path Data="{StaticResource RibbonDownloadIcon}" />
+									<TextBlock Text="Download&#x0A;Books" />
+								</StackPanel>
+							</Button>
+							<Button
+								Command="{Binding BackupAllPdfs}"
+								ToolTip.Tip="{Binding PdfBackupsToolStripText}">
+								<StackPanel>
+									<Path Data="{StaticResource PdfDownloadedIcon}" />
+									<TextBlock Text="Download&#x0A;PDFs" />
+								</StackPanel>
+							</Button>
+						</StackPanel>
+						<TextBlock Classes="ribbonSection" Text="Download" />
 					</StackPanel>
-					<TextBlock Classes="ribbonSection" Text="Download" />
-				</StackPanel>
-				<Border Classes="ribbonDivider" />
+					<Border Classes="ribbonDivider" />
 
-				<!-- Filter. At Risk leads, then the saved quick filters, which are last in the
-				     whole ribbon so a narrow window clips these rather than Scan or Download. -->
-				<StackPanel Classes="ribbonSection">
-					<StackPanel Classes="ribbonSectionButtons">
-						<Button
-							Command="{Binding FilterAtRisk}"
-							ToolTip.Tip="{Binding AtRiskTip}">
-							<StackPanel>
-								<Path Data="{StaticResource RibbonAtRiskIcon}" />
-								<TextBlock Text="At&#x0A;Risk" />
-							</StackPanel>
-						</Button>
-						<ItemsControl ItemsSource="{Binding RibbonQuickFilters}">
-							<ItemsControl.ItemsPanel>
-								<ItemsPanelTemplate>
-									<StackPanel Orientation="Horizontal" Spacing="4" />
-								</ItemsPanelTemplate>
-							</ItemsControl.ItemsPanel>
-							<ItemsControl.ItemTemplate>
-								<DataTemplate DataType="vm:QuickFilterButton">
-									<Button
-										Command="{Binding Apply}"
-										ToolTip.Tip="{Binding Tip}"
-										VerticalAlignment="Stretch"
-										VerticalContentAlignment="Center">
-										<TextBlock Text="{Binding Label}" />
-									</Button>
-								</DataTemplate>
-							</ItemsControl.ItemTemplate>
-						</ItemsControl>
+					<!-- Filter. At Risk leads, then the saved quick filters, which are last in the
+					     whole ribbon so a narrow window clips these rather than Scan or Download. -->
+					<StackPanel Classes="ribbonSection">
+						<StackPanel Classes="ribbonSectionButtons">
+							<Button
+								Command="{Binding FilterAtRisk}"
+								ToolTip.Tip="{Binding AtRiskTip}">
+								<StackPanel>
+									<Path Data="{StaticResource RibbonAtRiskIcon}" />
+									<TextBlock Text="At&#x0A;Risk" />
+								</StackPanel>
+							</Button>
+							<ItemsControl ItemsSource="{Binding RibbonQuickFilters}">
+								<ItemsControl.ItemsPanel>
+									<ItemsPanelTemplate>
+										<StackPanel Orientation="Horizontal" Spacing="4" />
+									</ItemsPanelTemplate>
+								</ItemsControl.ItemsPanel>
+								<ItemsControl.ItemTemplate>
+									<DataTemplate DataType="vm:QuickFilterButton">
+										<Button
+											Command="{Binding Apply}"
+											ToolTip.Tip="{Binding Tip}"
+											VerticalAlignment="Stretch"
+											VerticalContentAlignment="Center">
+											<TextBlock Text="{Binding Label}" />
+										</Button>
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+						</StackPanel>
+						<TextBlock Classes="ribbonSection" Text="Filter" />
 					</StackPanel>
-					<TextBlock Classes="ribbonSection" Text="Filter" />
-				</StackPanel>
-				<Border Classes="ribbonDivider" />
+					<Border Classes="ribbonDivider" />
 
-				<!-- Tools -->
-				<StackPanel Classes="ribbonSection">
-					<StackPanel Classes="ribbonSectionButtons">
-						<Button
-							IsEnabled="{Binding LibraryStats?.HasBookResults, TargetNullValue=false}"
-							Command="{Binding ExportLibraryAsync}"
-							ToolTip.Tip="Export your library to a file">
-							<StackPanel>
-								<Path Data="{StaticResource RibbonExportIcon}" />
-								<TextBlock Text="Export" />
-							</StackPanel>
-						</Button>
-						<Button
-							Command="{Binding ShowSettingsAsync}"
-							ToolTip.Tip="Open settings">
-							<StackPanel>
-								<Path Data="{StaticResource RibbonSettingsIcon}" />
-								<TextBlock Text="Settings" />
-							</StackPanel>
-						</Button>
+					<!-- Tools -->
+					<StackPanel Classes="ribbonSection">
+						<StackPanel Classes="ribbonSectionButtons">
+							<Button
+								IsEnabled="{Binding LibraryStats?.HasBookResults, TargetNullValue=false}"
+								Command="{Binding ExportLibraryAsync}"
+								ToolTip.Tip="Export your library to a file">
+								<StackPanel>
+									<Path Data="{StaticResource RibbonExportIcon}" />
+									<TextBlock Text="Export" />
+								</StackPanel>
+							</Button>
+							<Button
+								Command="{Binding ShowSettingsAsync}"
+								ToolTip.Tip="Open settings">
+								<StackPanel>
+									<Path Data="{StaticResource RibbonSettingsIcon}" />
+									<TextBlock Text="Settings" />
+								</StackPanel>
+							</Button>
+						</StackPanel>
+						<TextBlock Classes="ribbonSection" Text="Tools" />
 					</StackPanel>
-					<TextBlock Classes="ribbonSection" Text="Tools" />
 				</StackPanel>
-			</StackPanel>
-		</Border>
 
-		<!-- MinHeight rather than a fixed 48: the row is Auto in the parent, and the A/R/S
-		     steppers are three rows tall now. A fixed height clipped the third one, which
-		     rendered but had nowhere to go. -->
-		<Grid Grid.Row="2" Margin="8,4" MinHeight="48" ColumnDefinitions="Auto,*,Auto">
+				<Grid Grid.Column="1" Name="filterArea" ColumnDefinitions="Auto,*">
 
-			<Grid.Styles>
-				<Style Selector="TextBox">
-					<Setter Property="MinHeight" Value="10" />
-				</Style>
-				<Style Selector="Button">
-					<Setter Property="Padding" Value="12,2" />
-					<Setter Property="Margin" Value="10,0,0,0" />
-					<Setter Property="HorizontalContentAlignment" Value="Center" />
-					<Setter Property="VerticalContentAlignment" Value="Center" />
-				</Style>
-			</Grid.Styles>
-				
-			<!-- Search syntax help. Lists every searchable field, which now includes
-			     includeduntil/Expires, so it is the only place that documents them. -->
-			<StackPanel Grid.Column="0" IsVisible="{Binding !RemoveButtonsVisible}" Orientation="Horizontal">
-				<Button Name="filterHelpBtn" Margin="0" Command="{Binding FilterHelpBtn}" Content="?" ToolTip.Tip="Filter options: the fields you can search and how to combine them" />
-			</StackPanel>
+				<!-- Search syntax help. Lists every searchable field, which now includes
+				     includeduntil/Expires, so it is the only place that documents them. -->
+				<StackPanel Grid.Column="0" IsVisible="{Binding !RemoveButtonsVisible}" Orientation="Horizontal">
+					<Button Name="filterHelpBtn" Margin="0" Command="{Binding FilterHelpBtn}" Content="?" ToolTip.Tip="Filter options: the fields you can search and how to combine them" />
+				</StackPanel>
 
-			<StackPanel Grid.Column="1" Orientation="Horizontal">
-				<Button IsVisible="{Binding RemoveButtonsVisible}" IsEnabled="{Binding RemoveBooksButtonEnabled}" Command="{Binding RemoveBooksBtn}" Content="{Binding RemoveBooksButtonText}"/>
-				<Button IsVisible="{Binding RemoveButtonsVisible}" Command="{Binding DoneRemovingBtn}" Content="Done Removing Books"/>
-			</StackPanel>
+				<StackPanel Grid.Column="1" Orientation="Horizontal">
+					<Button IsVisible="{Binding RemoveButtonsVisible}" IsEnabled="{Binding RemoveBooksButtonEnabled}" Command="{Binding RemoveBooksBtn}" Content="{Binding RemoveBooksButtonText}"/>
+					<Button IsVisible="{Binding RemoveButtonsVisible}" Command="{Binding DoneRemovingBtn}" Content="Done Removing Books"/>
+				</StackPanel>
 
-			<!-- Stretches instead of the old fixed 620 cap. Column 1 is the star column and
-			     the filter string is the longest thing anyone types here: the At Risk query
-			     alone ran off the end of the old box. -->
-			<Grid
-				Grid.Column="1"
-				Margin="10,0,10,0"
-				HorizontalAlignment="Stretch"
-				VerticalAlignment="Center"
-				ColumnDefinitions="Auto,*,Auto,Auto,Auto"
-				IsVisible="{Binding !RemoveButtonsVisible}">
-				<TextBlock
-					Grid.Column="0"
-					Margin="0,0,8,0"
-					VerticalAlignment="Center"
-					Text="Filter" />
-				<TextBox
+				<!-- Stretches instead of the old fixed 620 cap. Column 1 is the star column and
+				     the filter string is the longest thing anyone types here: the At Risk query
+				     alone ran off the end of the old box. -->
+				<Grid
 					Grid.Column="1"
-					Name="filterSearchTb"
-					Height="28"
-					VerticalContentAlignment="Center"
-					InnerRightContent="{x:Null}"
-					ScrollViewer.HorizontalScrollBarVisibility="Auto"
-					ScrollViewer.VerticalScrollBarVisibility="Disabled"
-					Text="{Binding SelectedNamedFilter.Filter, Mode=OneWay}"
-					KeyDown="filterSearchTb_KeyPress" />
-				<!-- Applies what is in the box. Same height as CLEAR beside it; it used to sit
-				     in the right-hand group, away from the box it acts on. -->
-				<Button
-					Grid.Column="2"
-					Name="filterBtn"
-					Margin="6,0,0,0"
-					Padding="10,2"
-					Height="28"
-					VerticalContentAlignment="Center"
-					HorizontalContentAlignment="Center"
-					Command="{Binding FilterBtn}"
-					CommandParameter="{Binding #filterSearchTb.Text}"
-					Content="Filter"
-					ToolTip.Tip="Apply the filter in the box" />
-				<Button
-					Grid.Column="3"
-					Margin="6,0,0,0"
-					Padding="10,2"
-					Height="28"
-					VerticalContentAlignment="Center"
-					Click="ClearFilterButton_Click"
-					Content="CLEAR"
-					ToolTip.Tip="Clear filter" />
-				<!-- Next to CLEAR because both act on whatever is currently in the box. -->
-				<Button
-					Grid.Column="4"
-					Name="addQuickFilterBtn"
-					Margin="6,0,0,0"
-					Padding="10,2"
-					Height="28"
-					VerticalContentAlignment="Center"
-					Command="{Binding AddQuickFilterBtn}"
-					Content="Add To Quick Filters"
-					ToolTip.Tip="Save what is in the box as a quick filter, and put it on the ribbon" />
-			</Grid>
+					Margin="10,0,10,0"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Center"
+					ColumnDefinitions="Auto,*,Auto,Auto,Auto"
+					IsVisible="{Binding !RemoveButtonsVisible}">
+					<TextBlock
+						Grid.Column="0"
+						Margin="0,0,8,0"
+						VerticalAlignment="Center"
+						Text="Filter" />
+					<TextBox
+						Grid.Column="1"
+						Name="filterSearchTb"
+						Height="28"
+						VerticalContentAlignment="Center"
+						InnerRightContent="{x:Null}"
+						ScrollViewer.HorizontalScrollBarVisibility="Auto"
+						ScrollViewer.VerticalScrollBarVisibility="Disabled"
+						Text="{Binding SelectedNamedFilter.Filter, Mode=OneWay}"
+						KeyDown="filterSearchTb_KeyPress" />
+					<!-- Applies what is in the box. Same height as CLEAR beside it; it used to sit
+					     in the right-hand group, away from the box it acts on. -->
+					<Button
+						Grid.Column="2"
+						Name="filterBtn"
+						Margin="6,0,0,0"
+						Padding="10,2"
+						Height="28"
+						VerticalContentAlignment="Center"
+						HorizontalContentAlignment="Center"
+						Command="{Binding FilterBtn}"
+						CommandParameter="{Binding #filterSearchTb.Text}"
+						Content="Filter"
+						ToolTip.Tip="Apply the filter in the box" />
+					<Button
+						Grid.Column="3"
+						Margin="6,0,0,0"
+						Padding="10,2"
+						Height="28"
+						VerticalContentAlignment="Center"
+						Click="ClearFilterButton_Click"
+						Content="CLEAR"
+						ToolTip.Tip="Clear filter" />
+					<!-- Next to CLEAR because both act on whatever is currently in the box. -->
+					<Button
+						Grid.Column="4"
+						Name="addQuickFilterBtn"
+						Margin="6,0,0,0"
+						Padding="10,2"
+						Height="28"
+						VerticalContentAlignment="Center"
+						Command="{Binding AddQuickFilterBtn}"
+						Content="Add To Quick Filters"
+						ToolTip.Tip="Save what is in the box as a quick filter, and put it on the ribbon" />
+				</Grid>
 
-			<StackPanel Grid.Column="2" Orientation="Horizontal">
-				<!-- Text size on top, row height below. Bound to the single-factor commands,
-				     NOT to IncreaseGridFontSize/DecreaseGridFontSize, which step both factors
-				     and made the A and R rows behave identically. A and R are fully decoupled:
-				     A never moves the rows, R has its whole range regardless of font size.
-				     Ctrl+Plus/Minus and Ctrl+wheel keep the zoom-everything behaviour. -->
-				<StackPanel Orientation="Vertical" Margin="10,0,0,0">
-					<StackPanel Orientation="Horizontal">
-						<!-- Fixed width and right-aligned so the A and R buttons below stay
-						     in line as the numbers change width. -->
-						<TextBlock
-							Width="68"
-							Margin="0,0,6,0"
-							FontSize="11"
-							TextAlignment="Right"
-							VerticalAlignment="Center"
-							Text="{Binding GridFontSizeText}"
-							ToolTip.Tip="Current grid text size"
-							AutomationProperties.Name="Current grid text size" />
-						<Button
-							Padding="10,2"
-							Command="{Binding DecreaseTextOnly}"
-							ToolTip.Tip="Smaller grid text (row height unchanged)"
-							AutomationProperties.Name="Decrease grid text size"
-							Content="A&#x2013;" />
-						<Button
-							Margin="4,0,0,0"
-							Padding="10,2"
-							Command="{Binding ResetTextOnly}"
-							ToolTip.Tip="Reset grid text to default size"
-							AutomationProperties.Name="Reset grid text size to default"
-							Content="A0" />
-						<Button
-							Margin="4,0,0,0"
-							Padding="10,2"
-							Command="{Binding IncreaseTextOnly}"
-							ToolTip.Tip="Larger grid text (row height unchanged)"
-							AutomationProperties.Name="Increase grid text size"
-							Content="A+" />
+				<StackPanel Grid.Column="2" Orientation="Horizontal">
+					<!-- Text size on top, row height below. Bound to the single-factor commands,
+					     NOT to IncreaseGridFontSize/DecreaseGridFontSize, which step both factors
+					     and made the A and R rows behave identically. A and R are fully decoupled:
+					     A never moves the rows, R has its whole range regardless of font size.
+					     Ctrl+Plus/Minus and Ctrl+wheel keep the zoom-everything behaviour. -->
+					<StackPanel Orientation="Vertical" Margin="10,0,0,0">
+						<StackPanel Orientation="Horizontal">
+							<!-- Fixed width and right-aligned so the A and R buttons below stay
+							     in line as the numbers change width. -->
+							<TextBlock
+								Width="68"
+								Margin="0,0,6,0"
+								FontSize="11"
+								TextAlignment="Right"
+								VerticalAlignment="Center"
+								Text="{Binding GridFontSizeText}"
+								ToolTip.Tip="Current grid text size"
+								AutomationProperties.Name="Current grid text size" />
+							<Button
+								Padding="10,2"
+								Command="{Binding DecreaseTextOnly}"
+								ToolTip.Tip="Smaller grid text (row height unchanged)"
+								AutomationProperties.Name="Decrease grid text size"
+								Content="A&#x2013;" />
+							<Button
+								Margin="4,0,0,0"
+								Padding="10,2"
+								Command="{Binding ResetTextOnly}"
+								ToolTip.Tip="Reset grid text to default size"
+								AutomationProperties.Name="Reset grid text size to default"
+								Content="A0" />
+							<Button
+								Margin="4,0,0,0"
+								Padding="10,2"
+								Command="{Binding IncreaseTextOnly}"
+								ToolTip.Tip="Larger grid text (row height unchanged)"
+								AutomationProperties.Name="Increase grid text size"
+								Content="A+" />
+						</StackPanel>
+						<StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+							<TextBlock
+								Width="68"
+								Margin="0,0,6,0"
+								FontSize="11"
+								TextAlignment="Right"
+								VerticalAlignment="Center"
+								Text="{Binding GridRowHeightText}"
+								ToolTip.Tip="Current grid row height"
+								AutomationProperties.Name="Current grid row height" />
+							<Button
+								Padding="10,2"
+								Command="{Binding DecreaseRowHeight}"
+								ToolTip.Tip="Shorter rows (text size unchanged)"
+								AutomationProperties.Name="Decrease row height"
+								Content="R&#x2013;" />
+							<Button
+								Margin="4,0,0,0"
+								Padding="10,2"
+								Command="{Binding ResetRowHeight}"
+								ToolTip.Tip="Reset rows to default height"
+								AutomationProperties.Name="Reset row height to default"
+								Content="R0" />
+							<Button
+								Margin="4,0,0,0"
+								Padding="10,2"
+								Command="{Binding IncreaseRowHeight}"
+								ToolTip.Tip="Taller rows (text size unchanged)"
+								AutomationProperties.Name="Increase row height"
+								Content="R+" />
+						</StackPanel>
+						<!-- Shading strength for alternating rows. Third row so it lines up with the
+						     A and R steppers; the readout is the stored ARGB, alpha first. Writes
+						     through ChardonnayTheme, so it persists per theme and stays editable in
+						     the theme editor rather than becoming a competing setting. -->
+						<StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+							<TextBlock
+								Width="68"
+								Margin="0,0,6,0"
+								FontSize="11"
+								TextAlignment="Right"
+								VerticalAlignment="Center"
+								Text="{Binding RowShadeText}"
+								ToolTip.Tip="{Binding RowShadeTip}"
+								AutomationProperties.Name="Current alternating row shading" />
+							<Button
+								Padding="10,2"
+								Command="{Binding LightenAlternatingRows}"
+								ToolTip.Tip="{Binding RowShadeTip}"
+								AutomationProperties.Name="Lighten alternating row shading"
+								Content="S&#x2013;" />
+							<Button
+								Margin="4,0,0,0"
+								Padding="10,2"
+								Command="{Binding ResetAlternatingRows}"
+								ToolTip.Tip="Reset the row shading to the theme default"
+								AutomationProperties.Name="Reset alternating row shading to default"
+								Content="S0" />
+							<Button
+								Margin="4,0,0,0"
+								Padding="10,2"
+								Command="{Binding DarkenAlternatingRows}"
+								ToolTip.Tip="{Binding RowShadeTip}"
+								AutomationProperties.Name="Darken alternating row shading"
+								Content="S+" />
+						</StackPanel>
 					</StackPanel>
-					<StackPanel Orientation="Horizontal" Margin="0,3,0,0">
-						<TextBlock
-							Width="68"
-							Margin="0,0,6,0"
-							FontSize="11"
-							TextAlignment="Right"
-							VerticalAlignment="Center"
-							Text="{Binding GridRowHeightText}"
-							ToolTip.Tip="Current grid row height"
-							AutomationProperties.Name="Current grid row height" />
-						<Button
-							Padding="10,2"
-							Command="{Binding DecreaseRowHeight}"
-							ToolTip.Tip="Shorter rows (text size unchanged)"
-							AutomationProperties.Name="Decrease row height"
-							Content="R&#x2013;" />
-						<Button
-							Margin="4,0,0,0"
-							Padding="10,2"
-							Command="{Binding ResetRowHeight}"
-							ToolTip.Tip="Reset rows to default height"
-							AutomationProperties.Name="Reset row height to default"
-							Content="R0" />
-						<Button
-							Margin="4,0,0,0"
-							Padding="10,2"
-							Command="{Binding IncreaseRowHeight}"
-							ToolTip.Tip="Taller rows (text size unchanged)"
-							AutomationProperties.Name="Increase row height"
-							Content="R+" />
-					</StackPanel>
-					<!-- Shading strength for alternating rows. Third row so it lines up with the
-					     A and R steppers; the readout is the stored ARGB, alpha first. Writes
-					     through ChardonnayTheme, so it persists per theme and stays editable in
-					     the theme editor rather than becoming a competing setting. -->
-					<StackPanel Orientation="Horizontal" Margin="0,3,0,0">
-						<TextBlock
-							Width="68"
-							Margin="0,0,6,0"
-							FontSize="11"
-							TextAlignment="Right"
-							VerticalAlignment="Center"
-							Text="{Binding RowShadeText}"
-							ToolTip.Tip="{Binding RowShadeTip}"
-							AutomationProperties.Name="Current alternating row shading" />
-						<Button
-							Padding="10,2"
-							Command="{Binding LightenAlternatingRows}"
-							ToolTip.Tip="{Binding RowShadeTip}"
-							AutomationProperties.Name="Lighten alternating row shading"
-							Content="S&#x2013;" />
-						<Button
-							Margin="4,0,0,0"
-							Padding="10,2"
-							Command="{Binding ResetAlternatingRows}"
-							ToolTip.Tip="Reset the row shading to the theme default"
-							AutomationProperties.Name="Reset alternating row shading to default"
-							Content="S0" />
-						<Button
-							Margin="4,0,0,0"
-							Padding="10,2"
-							Command="{Binding DarkenAlternatingRows}"
-							ToolTip.Tip="{Binding RowShadeTip}"
-							AutomationProperties.Name="Darken alternating row shading"
-							Content="S+" />
-					</StackPanel>
+
+					<!-- Same command as View > Wrap text in narrow columns; this is just a
+					     reachable home for it next to the controls it interacts with.
+					     A plain Button rather than a ToggleButton: the icon advertises the
+					     result of pressing, so a pressed/unpressed state would be a second
+					     state signal pointing the opposite way. Current state is still legible
+					     from the icon, since the wrap arrow only shows while text is unwrapped. -->
+					<Button
+						Margin="6,0,0,0"
+						Padding="10,2"
+						VerticalAlignment="Stretch"
+						VerticalContentAlignment="Center"
+						Command="{Binding ToggleGridTextWrapping}"
+						ToolTip.Tip="{Binding GridTextWrappingTip}"
+						AutomationProperties.Name="Toggle text wrapping in grid columns">
+						<!-- The filter toolbar has no Path styling of its own, unlike the ribbon,
+						     so size and fill are set here. AutomationProperties.Name above carries
+						     the meaning now that there is no letter to read. -->
+						<Panel>
+							<Path
+								IsVisible="{Binding !GridTextWrapping}"
+								Width="18"
+								Height="14"
+								Stretch="Uniform"
+								Fill="{DynamicResource IconFill}"
+								Data="{StaticResource WrapTextIcon}" />
+							<Path
+								IsVisible="{Binding GridTextWrapping}"
+								Width="18"
+								Height="14"
+								Stretch="Uniform"
+								Fill="{DynamicResource IconFill}"
+								Data="{StaticResource NoWrapTextIcon}" />
+						</Panel>
+					</Button>
+
+
+					<Button Margin="10,0,0,0" Padding="4,2" Height="40" VerticalAlignment="Center" Command="{Binding ToggleQueueHideBtn}">
+						<Path Width="20" Height="20" Stretch="Uniform" Fill="{DynamicResource IconFill}" Data="{StaticResource	LeftArrows}">
+							<Path.RenderTransform>
+								<RotateTransform Angle="{Binding QueueButtonAngle}"/>
+							</Path.RenderTransform>
+						</Path>
+					</Button>
 				</StackPanel>
 
-				<!-- Same command as View > Wrap text in narrow columns; this is just a
-				     reachable home for it next to the controls it interacts with.
-				     A plain Button rather than a ToggleButton: the icon advertises the
-				     result of pressing, so a pressed/unpressed state would be a second
-				     state signal pointing the opposite way. Current state is still legible
-				     from the icon, since the wrap arrow only shows while text is unwrapped. -->
-				<Button
-					Margin="6,0,0,0"
-					Padding="10,2"
-					VerticalAlignment="Stretch"
-					VerticalContentAlignment="Center"
-					Command="{Binding ToggleGridTextWrapping}"
-					ToolTip.Tip="{Binding GridTextWrappingTip}"
-					AutomationProperties.Name="Toggle text wrapping in grid columns">
-					<!-- The filter toolbar has no Path styling of its own, unlike the ribbon,
-					     so size and fill are set here. AutomationProperties.Name above carries
-					     the meaning now that there is no letter to read. -->
-					<Panel>
-						<Path
-							IsVisible="{Binding !GridTextWrapping}"
-							Width="18"
-							Height="14"
-							Stretch="Uniform"
-							Fill="{DynamicResource IconFill}"
-							Data="{StaticResource WrapTextIcon}" />
-						<Path
-							IsVisible="{Binding GridTextWrapping}"
-							Width="18"
-							Height="14"
-							Stretch="Uniform"
-							Fill="{DynamicResource IconFill}"
-							Data="{StaticResource NoWrapTextIcon}" />
-					</Panel>
-				</Button>
 
-
-				<Button Margin="10,0,0,0" Padding="4,2" Height="40" VerticalAlignment="Center" Command="{Binding ToggleQueueHideBtn}">
-					<Path Width="20" Height="20" Stretch="Uniform" Fill="{DynamicResource IconFill}" Data="{StaticResource	LeftArrows}">
-						<Path.RenderTransform>
-							<RotateTransform Angle="{Binding QueueButtonAngle}"/>
-						</Path.RenderTransform>
-					</Path>
-				</Button>
-			</StackPanel>
-
-		</Grid>
+				</Grid>
+			</Grid>
+		</Border>
 		
-		<Border Grid.Row="3" Margin="8,0" BorderThickness="1" BorderBrush="{DynamicResource SystemBaseMediumLowColor}">
+		<Border Grid.Row="2" Margin="8,0" BorderThickness="1" BorderBrush="{DynamicResource SystemBaseMediumLowColor}">
 			<!-- A Grid rather than a SplitView: SplitView has a fixed OpenPaneLength and no
 			     resize grip, so the queue pane could not be resized at all. The splitter and
 			     pane column collapse together when the queue is hidden. Column width is saved
@@ -691,7 +691,7 @@
 		</Border>
 			
 		<!-- Bottom Status Strip -->
-		<Grid Grid.Row="4" Margin="8" VerticalAlignment="Bottom" ColumnDefinitions="Auto,Auto,*,Auto">
+		<Grid Grid.Row="3" Margin="8" VerticalAlignment="Bottom" ColumnDefinitions="Auto,Auto,*,Auto">
 			<Grid.Styles>
 				<Style Selector="ProgressBar:horizontal">
 					<Setter Property="MinWidth" Value="100" />
