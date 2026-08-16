@@ -35,7 +35,7 @@
 					<SolidColorBrush x:Key="SeriesEntryGridBackgroundBrush" Opacity="0.3" Color="#abffab" />
 					<!-- Every other row, in the grid and the download queue. Very low opacity:
 					     enough to follow a row across wide columns, not enough to read as a state. -->
-					<SolidColorBrush x:Key="AlternatingRowBackgroundBrush" Opacity="0.05" Color="#000000" />
+					<SolidColorBrush x:Key="AlternatingRowBackgroundBrush" Color="#14000000" />
 					<SolidColorBrush x:Key="ProcessQueueBookFailedBrush" Color="LightCoral" />
 					<SolidColorBrush x:Key="ProcessQueueBookCompletedBrush" Color="PaleGreen" />
 					<SolidColorBrush x:Key="ProcessQueueBookCancelledBrush" Color="Khaki" />
@@ -53,7 +53,7 @@
 				</ResourceDictionary>
 				<ResourceDictionary x:Key="Dark">
 					<SolidColorBrush x:Key="SeriesEntryGridBackgroundBrush" Opacity="0.3" Color="#bed2fa" />
-					<SolidColorBrush x:Key="AlternatingRowBackgroundBrush" Opacity="0.07" Color="#FFFFFF" />
+					<SolidColorBrush x:Key="AlternatingRowBackgroundBrush" Color="#26FFFFFF" />
 					<SolidColorBrush x:Key="ProcessQueueBookFailedBrush" Color="#502727" />
 					<SolidColorBrush x:Key="ProcessQueueBookCompletedBrush" Color="#1c3e20" />
 					<SolidColorBrush x:Key="ProcessQueueBookCancelledBrush" Color="#4e4b15" />
