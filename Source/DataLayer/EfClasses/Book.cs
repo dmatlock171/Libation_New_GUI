@@ -34,6 +34,20 @@ public class Book
 
 	// immutable
 	public string AudibleProductId { get; private set; }
+
+	/// <summary>
+	/// Where this book came from. Defaults to <see cref="BookSource.Audible"/>, which is 0, so
+	/// every row that predates this column is correct without a backfill.
+	/// </summary>
+	public BookSource Source { get; private set; }
+
+	/// <summary>True when <see cref="AudibleProductId"/> is a real ASIN. Audible-only features
+	/// should filter on this rather than assuming every row has one.</summary>
+	public bool IsAudible => Source is BookSource.Audible;
+
+	/// <summary>True when there is no audio file and never will be: the entry exists only so the
+	/// library shows what is owned.</summary>
+	public bool IsCatalogueOnly => Source is BookSource.CatalogueOnly;
 	public string Title { get; private set; }
 	public string Subtitle { get; private set; }
 	private string? _titleWithSubtitle;
@@ -107,6 +121,40 @@ public class Book
 		// assigns with biz logic
 		ReplaceAuthors(authors);
 		ReplaceNarrators(narrators);
+	}
+
+	/// <summary>Prefix marking a fabricated identifier, so a non-Audible id is obvious in the
+	/// database, in logs and in an exported library without having to join to anything.</summary>
+	public const string NonAudibleIdPrefix = "local:";
+
+	/// <summary>
+	/// Creates a book Libation did not get from Audible.
+	/// <para>
+	/// <see cref="AudibleProductId"/> is required and validated non-empty, so a book without an
+	/// ASIN still needs something there. It gets a GUID rather than a hash of the file path or
+	/// the tags: a hash changes when the user retags a file or moves a folder, and re-importing
+	/// would then silently create a duplicate instead of matching the existing row.
+	/// </para>
+	/// </summary>
+	public static Book CreateNonAudible(
+		BookSource source,
+		string? title,
+		string? subtitle,
+		string? description,
+		int lengthInMinutes,
+		IEnumerable<Contributor> authors,
+		IEnumerable<Contributor> narrators,
+		string localeName)
+	{
+		if (source is BookSource.Audible)
+			throw new ArgumentException("Audible books are created with a real ASIN, not a fabricated one.", nameof(source));
+
+		var id = new AudibleProductId($"{NonAudibleIdPrefix}{Guid.NewGuid():N}");
+
+		return new Book(id, title, subtitle, description, lengthInMinutes, ContentType.Product, authors, narrators, localeName)
+		{
+			Source = source
+		};
 	}
 
 	public void UpdateTitle(string? title, string? subtitle)

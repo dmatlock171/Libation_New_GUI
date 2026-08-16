@@ -8,6 +8,16 @@ public class LibraryBook
 	internal int BookId { get; private set; }
 	public Book Book { get; private set; }
 
+	/// <summary>
+	/// Account value for books that did not come from Audible.
+	/// <para>
+	/// A sentinel rather than making the column nullable. The constructor validates Account with
+	/// EnsureNotNull rather than EnsureNotNullOrWhiteSpace, so this is already legal, and it
+	/// avoids auditing every dereference of Account across both UIs for null.
+	/// </para>
+	/// </summary>
+	public const string LocalAccount = "local";
+
 	public DateTime DateAdded { get; private set; }
 	public string Account { get; private set; }
 
