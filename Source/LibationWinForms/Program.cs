@@ -66,6 +66,10 @@ static class Program
 			// logging is init'd here (also initializes InteropFactory via logStartupState)
 			LibationScaffolding.RunPostMigrationScaffolding(Variety.Classic, config);
 
+			// must follow RunPostMigrationScaffolding: the file sink has to have had its
+			// chance to open a file before we can tell whether it failed to.
+			MessageBoxLib.LogPathWarning_ShowIfTrue();
+
 			//*******************************************************************//
 			//                                                                   //
 			//  Start loading the library as soon as possible after logging    //

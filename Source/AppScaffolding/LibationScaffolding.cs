@@ -154,6 +154,7 @@ public static class LibationScaffolding
 		ensureSerilogConfig(config);
 		configureLogging(config);
 		logStartupState(config);
+		warnIfLogPathUnusable();
 
 		// all else should occur after logging
 
@@ -162,6 +163,30 @@ public static class LibationScaffolding
 
 	private static void ensureSerilogConfig(Configuration config)
 		=> config.EnsureSerilogConfig();
+
+	/// <summary>
+	/// ValidateSerilogConfiguration checks that the Serilog section is well formed, not that its
+	/// destination is reachable, and the file sink does not throw when it cannot open a file. So
+	/// a config pointing at a drive that no longer exists starts cleanly and logs nothing.
+	/// <para>
+	/// Writing this to the log is admittedly optimistic — if the File sink is the problem then
+	/// this line goes nowhere. It is still worth emitting for installs with a second sink, and
+	/// the UIs show the same warning to the user, which is what actually closes the gap.
+	/// </para>
+	/// </summary>
+	private static void warnIfLogPathUnusable()
+	{
+		try
+		{
+			if (LogPathValidator.Detect() is { } problem)
+				Log.Logger.Warning("Log file destination is unusable: {Problem} ConfiguredPath={ConfiguredPath}", problem.Message, problem.ConfiguredPath);
+		}
+		catch (Exception ex)
+		{
+			// Never let a diagnostic check be the thing that stops Libation from starting.
+			Log.Logger.Debug(ex, "Failed to validate the log file destination");
+		}
+	}
 
 	// to restore original: Console.SetOut(origOut);
 	private static TextWriter origOut { get; } = Console.Out;

@@ -66,6 +66,21 @@ Libation.
 	}
 
 	/// <summary>
+	/// Warns when Libation cannot write its log file. Shown every launch while the problem
+	/// persists — deliberately not suppressible, since the whole failure mode is that it is
+	/// already invisible, and it stops on its own once the path is fixed.
+	/// </summary>
+	public static void LogPathWarning_ShowIfTrue()
+	{
+		if (LibationFileManager.LogPathValidator.Detect() is { } problem)
+			MessageBox.Show(
+				LibationFileManager.LogPathValidator.ToUserMessage(problem),
+				"Logging is not working",
+				MessageBoxButtons.OK,
+				MessageBoxIcon.Warning);
+	}
+
+	/// <summary>
 	/// Note: the format field should use {0} and NOT use the `$` string interpolation. Formatting is done inside this method.
 	/// </summary>
 	public static DialogResult ShowConfirmationDialog(IEnumerable<LibraryBook> libraryBooks, string format, string title)

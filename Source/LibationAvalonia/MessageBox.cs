@@ -6,6 +6,7 @@ using DataLayer;
 using Dinah.Core.Logging;
 using LibationAvalonia.Dialogs;
 using LibationAvalonia.ViewModels.Dialogs;
+using LibationFileManager;
 using LibationUiBase.Forms;
 using System;
 using System.Collections.Generic;
@@ -52,6 +53,17 @@ public class MessageBox
 			to set your debug MinimumLevel to Information and restart
 			Libation.
 			""", "Verbose logging enabled", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+	}
+
+	/// <summary>
+	/// Warns when Libation cannot write its log file. Shown every launch while the problem
+	/// persists — deliberately not suppressible, since the whole failure mode is that it is
+	/// already invisible, and it stops on its own once the path is fixed.
+	/// </summary>
+	public static async Task LogPathWarning_ShowIfTrue()
+	{
+		if (LogPathValidator.Detect() is { } problem)
+			await Show(LogPathValidator.ToUserMessage(problem), "Logging is not working", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 	}
 
 	/// <summary>

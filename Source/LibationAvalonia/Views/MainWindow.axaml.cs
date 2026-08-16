@@ -235,6 +235,7 @@ public partial class MainWindow : ReactiveWindow<MainVM>
 		WindowChrome.ApplyThemeToTitleBar(this);
 
 		await MessageBox.VerboseLoggingWarning_ShowIfTrue();
+		await MessageBox.LogPathWarning_ShowIfTrue();
 
 		if (AudibleFileStorage.BooksDirectory is null)
 		{
