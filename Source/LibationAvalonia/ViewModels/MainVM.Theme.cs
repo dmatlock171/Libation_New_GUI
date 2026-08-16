@@ -9,10 +9,19 @@ public partial class MainVM
 	/// <summary> Wrap grid text that's too wide for its column, instead of clipping it. </summary>
 	public bool GridTextWrapping => Configuration.Instance.GridTextWrapping;
 
+	/// <summary>
+	/// Describes what pressing the toolbar button will do, not what is currently set. The
+	/// button's icon works the same way, so the two have to change together.
+	/// </summary>
+	public string GridTextWrappingTip => Configuration.Instance.GridTextWrapping
+		? "Stop wrapping: show each value on a single line, clipped at the column edge."
+		: "Wrap text that is too wide for its column, instead of clipping it. Wrapped text still needs the room to show: use R+ if rows are too short for the extra lines.";
+
 	public void ToggleGridTextWrapping()
 	{
 		Configuration.Instance.GridTextWrapping = !Configuration.Instance.GridTextWrapping;
 		this.RaisePropertyChanged(nameof(GridTextWrapping));
+		this.RaisePropertyChanged(nameof(GridTextWrappingTip));
 	}
 
 	/// <summary> Hide imprints and brands from the last-name author columns. </summary>
