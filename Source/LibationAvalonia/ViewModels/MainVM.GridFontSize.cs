@@ -1,4 +1,5 @@
 using LibationFileManager;
+using ReactiveUI;
 
 namespace LibationAvalonia.ViewModels;
 
@@ -12,6 +13,32 @@ public partial class MainVM
 	private const float FontScaleStep = 0.1f;
 
 	private const float DefaultScale = 1f;
+
+	/// <summary>
+	/// The sizes actually in effect, for the readouts beside the A and R buttons. Derived from
+	/// ProductsDisplay's base constants rather than from a second copy of those numbers, so the
+	/// readout cannot drift from what the grid is really doing. Both are in device-independent
+	/// pixels, which is what Avalonia's FontSize and Height are measured in.
+	/// </summary>
+	public string GridFontSizeText => $"{LibationAvalonia.Views.ProductsDisplay.BaseTextFontSize * Configuration.Instance.GridFontScaleFactor:0.#}px";
+	public string GridRowHeightText => $"{LibationAvalonia.Views.ProductsDisplay.BaseRowHeight * Configuration.Instance.GridScaleFactor:0}px";
+
+	/// <summary>
+	/// Watches the settings rather than the buttons, because the scale factors are also changed
+	/// by Ctrl+wheel (which goes straight to ProductsDisplay) and by the Settings dialog sliders.
+	/// Hooking the buttons alone would leave the readouts stale after either.
+	/// </summary>
+	private void Configure_GridScaling()
+		=> Configuration.Instance.PropertyChanged += Configuration_GridScalingChanged;
+
+	private void Configuration_GridScalingChanged(object? sender, Dinah.Core.PropertyChangedEventArgsEx? e)
+	{
+		if (e?.PropertyName is null or nameof(Configuration.GridFontScaleFactor))
+			this.RaisePropertyChanged(nameof(GridFontSizeText));
+
+		if (e?.PropertyName is null or nameof(Configuration.GridScaleFactor))
+			this.RaisePropertyChanged(nameof(GridRowHeightText));
+	}
 
 	public void IncreaseGridFontSize() => StepGridFontScale(FontScaleStep);
 	public void DecreaseGridFontSize() => StepGridFontScale(-FontScaleStep);

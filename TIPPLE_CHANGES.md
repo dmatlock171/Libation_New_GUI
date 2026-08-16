@@ -72,6 +72,8 @@ Menus were regrouped, and Settings gained a **Diagnostics...** entry (see below)
 - **Text size (A) and row height (R) controls** in the toolbar, plus `Ctrl`+`+`/`-` and
   `Ctrl`+mouse wheel to scale both at once.
   - **A** changes text size and nothing else. **R** changes row height and nothing else.
+  - Each row of buttons shows the size currently in effect — text size in px beside A, row
+    height in px beside R — so the controls are not two pairs of unlabelled arrows.
   - The two are fully decoupled, which means text large enough to outgrow its row will be
     clipped; the fix is to press R+. Sizing rows automatically to fit the text was tried and
     removed: it left A still moving the rows, and left R doing nothing at all whenever the font

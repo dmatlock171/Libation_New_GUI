@@ -378,6 +378,17 @@
 				     Ctrl+Plus/Minus and Ctrl+wheel keep the zoom-everything behaviour. -->
 				<StackPanel Orientation="Vertical" Margin="10,0,0,0">
 					<StackPanel Orientation="Horizontal">
+						<!-- Fixed width and right-aligned so the A and R buttons below stay
+						     in line as the numbers change width. -->
+						<TextBlock
+							Width="40"
+							Margin="0,0,6,0"
+							FontSize="11"
+							TextAlignment="Right"
+							VerticalAlignment="Center"
+							Text="{Binding GridFontSizeText}"
+							ToolTip.Tip="Current grid text size"
+							AutomationProperties.Name="Current grid text size" />
 						<Button
 							Padding="10,2"
 							Command="{Binding DecreaseTextOnly}"
@@ -400,6 +411,15 @@
 							Content="A+" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+						<TextBlock
+							Width="40"
+							Margin="0,0,6,0"
+							FontSize="11"
+							TextAlignment="Right"
+							VerticalAlignment="Center"
+							Text="{Binding GridRowHeightText}"
+							ToolTip.Tip="Current grid row height"
+							AutomationProperties.Name="Current grid row height" />
 						<Button
 							Padding="10,2"
 							Command="{Binding DecreaseRowHeight}"

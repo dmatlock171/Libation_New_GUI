@@ -30,6 +30,7 @@ public partial class MainVM : ViewModelBase
 		Configure_BackupCounts();
 		Configure_Export();
 		Configure_Filters();
+		Configure_GridScaling();
 		Configure_Import();
 		Configure_Liberate();
 		Configure_ProcessQueue();

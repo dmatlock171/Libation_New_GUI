@@ -334,13 +334,16 @@ public partial class ProductsDisplay : UserControl
 	// fonts, row height touches only rows. Sizing rows to the larger of the two was tried and
 	// removed — it meant the text buttons still grew the rows, and left the row-height buttons
 	// doing nothing at all whenever the font scale was ahead of them.
+	/// <summary>Body text size at scale 1. Public so the toolbar can show the size actually in
+	/// use rather than keeping a second copy of the number.</summary>
+	public const double BaseTextFontSize = 11;
+
 	private void setFontScale(double scaleFactor)
 	{
-		const double TextBlockFontSize = 11;
 		const double H1FontSize = 14;
 		const double H2FontSize = 12;
 
-		fontSizeSetter.Value = TextBlockFontSize * scaleFactor;
+		fontSizeSetter.Value = BaseTextFontSize * scaleFactor;
 		fontSizeH1Setter.Value = H1FontSize * scaleFactor;
 		fontSizeH2Setter.Value = H2FontSize * scaleFactor;
 
@@ -367,6 +370,10 @@ public partial class ProductsDisplay : UserControl
 		productsGrid.Styles.Add(textWrapStyle);
 	}
 
+	/// <summary>Row height at scale 1. Public for the same reason as
+	/// <see cref="BaseTextFontSize"/>.</summary>
+	public const double BaseRowHeight = 80;
+
 	/// <summary>
 	/// Row height, and the two fixed-width columns that have to match it. Driven by
 	/// GridScaleFactor alone — the font scale deliberately has no say here, so the R controls
@@ -374,7 +381,6 @@ public partial class ProductsDisplay : UserControl
 	/// </summary>
 	private void setGridScale(double scaleFactor)
 	{
-		const float BaseRowHeight = 80;
 		const float BaseLiberateWidth = 75;
 		const float BaseCoverWidth = 80;
 
