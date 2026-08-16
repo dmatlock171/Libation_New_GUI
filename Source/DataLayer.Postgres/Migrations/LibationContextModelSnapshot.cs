@@ -17,7 +17,7 @@ namespace DataLayer.Postgres.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.2")
+                .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -80,6 +80,9 @@ namespace DataLayer.Postgres.Migrations
 
                     b.Property<string>("PictureLarge")
                         .HasColumnType("text");
+
+                    b.Property<int>("Source")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Subtitle")
                         .IsRequired()
