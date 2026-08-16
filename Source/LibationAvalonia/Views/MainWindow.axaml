@@ -276,6 +276,11 @@
 						<Style Selector="Button TextBlock">
 							<Setter Property="FontSize" Value="11" />
 							<Setter Property="HorizontalAlignment" Value="Center" />
+							<!-- Two lines' worth whether the label uses them or not. Scan and Settings are
+							     one line while Download ALL is two, which made those buttons shorter and
+							     their icons sit in a smaller box. The icons were always identical; the
+							     buttons around them were not. -->
+							<Setter Property="MinHeight" Value="30" />
 							<!-- The download buttons use two-line labels to stay narrow; centre
 							     both lines rather than left-aligning the second. -->
 							<Setter Property="TextAlignment" Value="Center" />
