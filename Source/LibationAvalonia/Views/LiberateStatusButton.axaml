@@ -25,6 +25,21 @@
 			<Setter Property="Width" Value="28.8" />
 		</Style>
 
+		<!-- The status button fills its cell, and a Fluent button paints an opaque
+		     background, which hid the alternating row shading behind this column while
+		     every other column showed it. Transparent in the normal state lets the row
+		     colour through; hover and disabled keep their own backgrounds below, so the
+		     cell still reads and behaves as a button. -->
+		<Style Selector="Button /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Background" Value="Transparent" />
+			<Setter Property="BorderBrush" Value="Transparent" />
+		</Style>
+		<Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Background" Value="{DynamicResource SystemBaseLowColor}" />
+		</Style>
+		<Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Background" Value="{DynamicResource SystemBaseMediumLowColor}" />
+		</Style>
 		<Style Selector="Button:disabled /template/ ContentPresenter#PART_ContentPresenter">
 			<Setter Property="Background" Value="{DynamicResource SystemChromeDisabledLowColor}" />
 			<Setter Property="BorderBrush" Value="{DynamicResource SystemChromeDisabledLowColor}" />
