@@ -52,8 +52,10 @@ A row of icon-and-label buttons between the menu bar and the filter toolbar, gro
 sections the way Word does: **Library** (Scan), **Download** (ALL, Books, PDFs), **Filter** (At Risk
 and your saved quick filters), **Tools** (Export, Settings). Live counts appear as tooltips.
 
-The whole strip toggles from **View > Show Ribbon** (`ShowRibbon`, on by default) for anyone who
-would rather have the vertical space. The first ten saved quick filters appear as buttons in the
+The ribbon shares one row with the filter box: sections on the left at their natural width, the
+filter stretching through the middle, the grid size steppers on the right. **View > Show Ribbon**
+(`ShowRibbon`, on by default) hides the button sections; the filter box stays, since the row exists
+for it either way. The first ten saved quick filters appear as buttons in the
 Filter section; they sit last so a narrow window clips them rather than Scan or Download.
 
 **Why.** The most-used actions in a library manager are "scan" and "download", and both were two
@@ -99,22 +101,25 @@ Menus were regrouped, and Settings gained a **Diagnostics...** entry (see below)
 
 ## At risk
 
-A ribbon button that filters to Audible Plus titles you have not downloaded which expire within 90
-days, soonest first. Plus titles leave the catalogue on a date Audible sets, and until now nothing
-in the UI said so beforehand: they simply stopped being in the library.
+A ribbon button that filters to **every Audible Plus title you have not downloaded**. Plus titles
+leave the catalogue on Audible's schedule, and until now nothing in the UI said so beforehand:
+they simply stopped being in the library.
 
 This library had already lost 95 books that way. Every one was Plus, every one had never been
 downloaded, and not a single owned title has ever vanished.
 
-`IncludedUntil` is now indexed for search, so the same query is available by hand as
-`includeduntil:[20260101 TO 20260401]`, with `Expires` and `Expiry` as aliases. Adding a field to
-the index also made the index itself self-healing: it carries a fingerprint of the indexed field
-names, and rebuilds when that changes, because Lucene answers a query about a field it has never
-seen with silence rather than an error.
+**Why it does not filter on the expiry date.** It did at first, showing only titles expiring within
+90 days. The data disproved that: of those 95 lost titles, *none* carried an expiry date. Only 143
+of 2,194 Plus titles have one at all, and those have never been the ones that disappear. A missing
+date does not mean safe — it means Audible has not published a deadline, which is both the normal
+case and the one that costs you books. Dates are used for sorting instead, so anything with a known
+deadline can be brought to the top by sorting on Included Until.
 
-**Caveat:** Audible supplies an expiry date for only a fraction of Plus titles — 143 of 2,194 in
-this library. Titles without one cannot be seen by this filter and can disappear without warning.
-See ROADMAP.md.
+`IncludedUntil` is indexed for search regardless, so date queries are available by hand as
+`includeduntil:[20260101 TO 20260401]`, with `Expires` and `Expiry` as aliases. Adding a field to
+the index also made the index self-healing: it carries a fingerprint of the indexed field names and
+rebuilds when that changes, because Lucene answers a query about a field it has never seen with
+silence rather than an error.
 
 ---
 

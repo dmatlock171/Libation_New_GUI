@@ -30,20 +30,35 @@ Worth checking by eye once it runs:
 
 ## Features
 
-### 1. Find the missing expiry dates
-**Highest leverage item here, and cheap to answer.**
+### 1. Learn whether Audible publishes the missing expiry dates
+**Answered in part, and the answer changed the feature.**
 
-Of 2,194 Plus titles, only **143 carry an `IncludedUntil` date**. At Risk can only see those, so
-it currently covers about 6% of the library it exists to protect. The other 2,051 can vanish with
-no warning at all — which is exactly what happened to the 95 already lost.
+Of 2,194 Plus titles only 143 carry an `IncludedUntil` date. The assumption was that this was a
+gap to close. Then the library settled it: **of the 95 titles already lost, none had an expiry
+date — not one.** The 143 dated titles have never been the ones that vanish.
 
-The question is whether Audible's API supplies a date that Libation discards, or whether it
-genuinely isn't there. `AudibleUtilities\Extensions.cs:12` `GetExpirationDate()` is the only
-producer; `DtoImporterService\LibraryBookImporter.cs:89` is where it lands. Look at the raw
-response for a Plus title that currently shows no date before writing anything.
+So a missing date does not mean safe; it is the normal case and evidently the dangerous one. At
+Risk no longer requires a date and instead lists every undownloaded Plus title, using dates only
+for ordering.
 
-If the data exists, everything below about At Risk gets several times more valuable. If it
-doesn't, At Risk is inherently partial and should say so in its tooltip.
+What is still unknown is *why* they are missing. `GetExpirationDate()`
+(`AudibleUtilities\Extensions.cs:17`) discards three things, all of which become an
+indistinguishable `null`:
+
+- `EndDate` years 2099 and 9999, Audible's "indefinite" sentinels
+- any `EndDate` already in the past
+- anything when `Plans` is absent or has no AYCE entry
+
+The main import path does request `ProductPlans` (`LibraryCommands.cs:130`), so the data is being
+asked for. Worth logging the raw `Plans` array for a sample of titles during one scan to find out
+which of the three cases dominates. If most undated titles are really 2099 sentinels, storing that
+as "indefinite" rather than `null` would at least distinguish "no deadline announced" from "we
+have no data" — and would tell the user which is which.
+
+Note `importSingleToDb` (`LibraryCommands.cs:244`) is fed by a scan configured with only
+`ProductAttrs | ProductDesc | Relationships` (`LibraryCommands.cs:54`), so titles imported through
+that path get no plan data at all. Worth confirming whether that path can write a null over a good
+value.
 
 ### 2. Expiring-soon count and startup warning
 Finishes At Risk: a count in the status bar, and a nudge at startup when something is close.
@@ -97,8 +112,6 @@ problem this library has.
   reads as too flat, add a border rather than restoring the fill.
 - `AlternatingRowBackgroundBrush` is adjustable from the S steppers and the theme editor. Defaults
   are `#14000000` light and `#26FFFFFF` dark.
-- At Risk looks 90 days ahead (`MainVM.AtRiskDays`). Worth making a setting if that window turns
-  out to be wrong in practice.
 
 ---
 

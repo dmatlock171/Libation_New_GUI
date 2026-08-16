@@ -1,5 +1,3 @@
-using LibationFileManager;
-using System;
 using System.Threading.Tasks;
 
 namespace LibationAvalonia.ViewModels;
@@ -7,43 +5,39 @@ namespace LibationAvalonia.ViewModels;
 public partial class MainVM
 {
 	/// <summary>
-	/// How far ahead "at risk" looks. Long enough to be worth acting on, short enough that the
-	/// result stays a to-do list rather than a second copy of the library.
-	/// </summary>
-	public const int AtRiskDays = 90;
-
-	/// <summary>
-	/// Audible Plus titles that are about to leave the catalogue and have not been downloaded.
+	/// Every Audible Plus title you have not downloaded.
 	/// <para>
-	/// This is the one query worth a button. A Plus title that expires while undownloaded is
-	/// simply gone, and nothing in the UI says so beforehand — it just stops being in the
-	/// library. Owned titles are never at risk, which is why the filter is restricted to Plus.
+	/// The first version of this required an expiry date within 90 days, on the assumption that
+	/// a known deadline was what made a book at risk. The library disproved it: of the 95 titles
+	/// that had already vanished, <em>none</em> carried an expiry date. Not one. So that filter
+	/// would have caught none of the books it was built to save, while the 143 titles with dates
+	/// — the only ones it did match — have never yet been lost.
+	/// </para>
+	/// <para>
+	/// A missing date does not mean a title is safe. It means Audible has not announced when it
+	/// goes, which is the normal case and evidently the dangerous one. So the filter no longer
+	/// asks for a date; it asks the question that actually predicts loss — is this Plus, and is
+	/// it still only on Audible's servers. The dates are used for ordering instead, so anything
+	/// with a known deadline surfaces first.
 	/// </para>
 	/// </summary>
 	public Task FilterAtRisk() => PerformFilter(new(BuildAtRiskFilter(), "At risk"));
 
 	public string AtRiskTip
-		=> $"Show Audible Plus titles you haven't downloaded that expire within {AtRiskDays} days.\n"
-		+ "Once a Plus title expires it leaves your library whether or not you kept a copy.";
+		=> "Show Audible Plus titles you haven't downloaded.\n"
+		+ "Plus titles leave the catalogue on Audible's schedule, and most carry no published "
+		+ "expiry date — every title lost from this library so far had none.\n"
+		+ "Sort by Included Until to bring the ones with a known deadline to the top.";
 
 	/// <summary>
-	/// Built fresh on every click so the window moves with the calendar rather than being frozen
-	/// at whatever date it was saved.
-	/// <para>
 	/// Explicit +/- rather than bare terms: Lucene's default operator here is OR, so
-	/// "Plus IncludedUntil:[...]" would return everything Plus <em>or</em> everything expiring.
+	/// "Plus -Liberated" would return everything Plus <em>or</em> everything not downloaded.
 	/// The prefixes force each clause to be required regardless of the default.
-	/// </para>
 	/// <para>
-	/// <c>-Absent</c> drops titles already gone from Audible — they cannot be downloaded now, so
-	/// listing them as at risk would be pointing at a fire that has already burnt out.
+	/// <c>-Absent</c> drops titles already gone from Audible. They cannot be downloaded now, so
+	/// listing them would be pointing at a fire that has already burnt out.
 	/// </para>
 	/// </summary>
-	internal static string BuildAtRiskFilter(int days = AtRiskDays)
-	{
-		var from = DateTime.Today;
-		var until = DateTime.Today.AddDays(days);
-
-		return $"+Plus +{nameof(DataLayer.LibraryBook.IncludedUntil)}:[{from:yyyyMMdd} TO {until:yyyyMMdd}] -Liberated -Absent";
-	}
+	internal static string BuildAtRiskFilter()
+		=> "+Plus -Liberated -Absent";
 }
