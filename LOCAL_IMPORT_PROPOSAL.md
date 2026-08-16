@@ -28,8 +28,13 @@ asking for their shelf to be complete.
 
 Worth stating explicitly, because it is the obvious first idea:
 
-- **No DRM concern.** Chirp, Libro.fm and Downpour all sell DRM-free files. There is
-  nothing to decrypt. Whatever value Libation adds for Audible does not apply here.
+- **No DRM concern for the stores this serves.** Libro.fm, Downpour and Authors Direct
+  sell DRM-free files, as do LibriVox and the Internet Archive. There is nothing to
+  decrypt, so whatever value Libation adds for Audible does not apply here.
+  *Correction:* an earlier draft listed Chirp among them. It is not — Chirp audiobooks
+  are DRM-protected and play only in its own app or web player. Chirp is therefore out
+  of scope for this proposal and for the project: import serves the stores that let you
+  hold the file, and nothing here decrypts anything.
 - **Terms of service, not copyright, is the risk.** None of these stores publish an
   API. Integration means driving an authenticated session programmatically, which
   retailer terms commonly prohibit even for content the user has bought. That is a
@@ -44,8 +49,12 @@ Import has none of these properties, and covers every store at once.
 
 The data model assumes Audible throughout:
 
-- `Book.AudibleProductId` is required, immutable, and validated non-empty.
-- `LibraryBook` associates every entry with an Audible `Account`.
+- `Book.AudibleProductId` is a non-nullable `string` with a private setter, and the
+  `AudibleProductId` value type validates non-empty (`DataLayer/EfClasses/Book.cs`).
+- `LibraryBook.Account` is a non-nullable `string`. Worth noting for step 2: the
+  constructor validates it with `EnsureNotNull`, **not** `EnsureNotNullOrWhiteSpace`
+  (`DataLayer/EfClasses/LibraryBook.cs`), so a sentinel value such as `"local"` is
+  already legal. Making the column genuinely nullable may not be necessary.
 - The library scanner, the "scan for better quality" feature, and the
   "locate audiobooks" matcher all key off the Audible product ID.
 
