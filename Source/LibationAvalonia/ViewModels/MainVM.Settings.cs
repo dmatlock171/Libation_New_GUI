@@ -24,6 +24,7 @@ partial class MainVM
 	}
 
 	public Task ShowAboutAsync() => new LibationAvalonia.Dialogs.AboutDialog().ShowDialog(MainWindow);
+	public Task ShowDiagnosticsAsync() => new LibationAvalonia.Dialogs.DiagnosticsDialog().ShowDialog(MainWindow);
 	public Task ShowAccountsAsync() => new LibationAvalonia.Dialogs.AccountsDialog().ShowDialog(MainWindow);
 	public Task ShowSettingsAsync() => new LibationAvalonia.Dialogs.SettingsDialog().ShowDialog(MainWindow);
 	public Task ShowTrashBinAsync() => new LibationAvalonia.Dialogs.TrashBinDialog().ShowDialog(MainWindow);

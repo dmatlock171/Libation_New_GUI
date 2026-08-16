@@ -92,6 +92,7 @@
 					<NativeMenuItem Command="{Binding LaunchHangover}" Header="Launch Hangover" />
 					<NativeMenuItemSeparator />
 					<NativeMenuItem Command="{Binding StartWalkthroughAsync}" Header="Take a Guided Tour of Libation" />
+					<NativeMenuItem Command="{Binding ShowDiagnosticsAsync}" Header="Diagnostics..." />
 					<NativeMenuItem Command="{Binding ShowAboutAsync}" Header="About..." />
 				</NativeMenu>
 			</NativeMenuItem>
@@ -192,6 +193,7 @@
 					<MenuItem Command="{Binding ShowFindBetterQualityBooksAsync}" Header="Scan for Better Quality Audiobooks"  ToolTip.Tip="{Binding FindBetterQualityBooksTip}"/>
 					<Separator />
 					<MenuItem Command="{Binding StartWalkthroughAsync}" Header="Take a Guided _Tour of Libation" />
+					<MenuItem Command="{Binding ShowDiagnosticsAsync}" Header="_Diagnostics..." ToolTip.Tip="Where Libation's files, database and log actually are, and whether they are working." />
 					<MenuItem Command="{Binding ShowAboutAsync}" Header="A_bout..." />
 				</MenuItem>
 			</Menu>
