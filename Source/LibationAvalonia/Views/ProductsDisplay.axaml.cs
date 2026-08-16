@@ -270,8 +270,14 @@ public partial class ProductsDisplay : UserControl
 		//First row to render means the grid is populated and columns can be sorted.
 		RestoreSavedSort();
 
+		// Series rows keep their own colour: it means something, whereas striping is only
+		// there to help the eye track across wide columns. Set here rather than with an
+		// :nth-child selector because the DataGrid virtualises, and Row.Index is the row's
+		// position in the data rather than among whichever containers currently exist.
 		if (e.Row.DataContext is LibraryBookEntry entry && entry.Liberate?.IsEpisode is true)
 			e.Row.DynamicResource(DataGridRow.BackgroundProperty, "SeriesEntryGridBackgroundBrush");
+		else if (e.Row.Index % 2 == 1)
+			e.Row.DynamicResource(DataGridRow.BackgroundProperty, "AlternatingRowBackgroundBrush");
 		else
 			e.Row.DynamicResource(DataGridRow.BackgroundProperty, "SystemRegionColor");
 	}

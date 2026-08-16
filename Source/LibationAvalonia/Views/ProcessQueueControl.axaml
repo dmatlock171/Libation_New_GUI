@@ -37,6 +37,14 @@
 							VerticalScrollBarVisibility="Auto"
 							AllowAutoHide="False">
 							<ItemsControl Name="QueueListControl" ItemsSource="{Binding Queue}">
+								<ItemsControl.Styles>
+									<!-- Striping the generated containers rather than the book control, so it
+									     sits behind the per-book status colours (failed, completed, cancelled)
+									     instead of fighting them. -->
+									<Style Selector="ItemsControl > ContentPresenter:nth-child(2n)">
+										<Setter Property="Background" Value="{DynamicResource AlternatingRowBackgroundBrush}" />
+									</Style>
+								</ItemsControl.Styles>
 								<ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
 										<VirtualizingStackPanel />

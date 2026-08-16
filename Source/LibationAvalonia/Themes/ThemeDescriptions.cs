@@ -77,6 +77,7 @@ public static class ThemeDescriptions
 		AddIfMissing("HyperlinkNew", "Unvisited links");
 		AddIfMissing("HyperlinkVisited", "Visited links");
 		AddIfMissing("SeriesEntryGridBackgroundBrush", "Background of series parent rows in the grid");
+		AddIfMissing("AlternatingRowBackgroundBrush", "Shading on every other row in the grid and download queue");
 		AddIfMissing("ProcessQueueBookFailedBrush", "Process queue: failed item background");
 		AddIfMissing("ProcessQueueBookCompletedBrush", "Process queue: completed item background");
 		AddIfMissing("ProcessQueueBookCancelledBrush", "Process queue: cancelled item background");
