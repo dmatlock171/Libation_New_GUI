@@ -492,7 +492,7 @@
 						<!-- Fixed width and right-aligned so the A and R buttons below stay
 						     in line as the numbers change width. -->
 						<TextBlock
-							Width="40"
+							Width="68"
 							Margin="0,0,6,0"
 							FontSize="11"
 							TextAlignment="Right"
@@ -523,7 +523,7 @@
 					</StackPanel>
 					<StackPanel Orientation="Horizontal" Margin="0,3,0,0">
 						<TextBlock
-							Width="40"
+							Width="68"
 							Margin="0,0,6,0"
 							FontSize="11"
 							TextAlignment="Right"
@@ -551,6 +551,41 @@
 							ToolTip.Tip="Taller rows (text size unchanged)"
 							AutomationProperties.Name="Increase row height"
 							Content="R+" />
+					</StackPanel>
+					<!-- Shading strength for alternating rows. Third row so it lines up with the
+					     A and R steppers; the readout is the stored ARGB, alpha first. Writes
+					     through ChardonnayTheme, so it persists per theme and stays editable in
+					     the theme editor rather than becoming a competing setting. -->
+					<StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+						<TextBlock
+							Width="68"
+							Margin="0,0,6,0"
+							FontSize="11"
+							TextAlignment="Right"
+							VerticalAlignment="Center"
+							Text="{Binding RowShadeText}"
+							ToolTip.Tip="{Binding RowShadeTip}"
+							AutomationProperties.Name="Current alternating row shading" />
+						<Button
+							Padding="10,2"
+							Command="{Binding LightenAlternatingRows}"
+							ToolTip.Tip="{Binding RowShadeTip}"
+							AutomationProperties.Name="Lighten alternating row shading"
+							Content="S&#x2013;" />
+						<Button
+							Margin="4,0,0,0"
+							Padding="10,2"
+							Command="{Binding ResetAlternatingRows}"
+							ToolTip.Tip="Reset the row shading to the theme default"
+							AutomationProperties.Name="Reset alternating row shading to default"
+							Content="S0" />
+						<Button
+							Margin="4,0,0,0"
+							Padding="10,2"
+							Command="{Binding DarkenAlternatingRows}"
+							ToolTip.Tip="{Binding RowShadeTip}"
+							AutomationProperties.Name="Darken alternating row shading"
+							Content="S+" />
 					</StackPanel>
 				</StackPanel>
 
@@ -589,29 +624,6 @@
 					</Panel>
 				</Button>
 
-				<!-- Shading strength for alternating rows, stacked to match the two rows of A
-				     and R beside it. Writes the alpha into the themed brush, so it persists per
-				     theme and stays visible in the theme editor rather than becoming a second,
-				     competing setting. -->
-				<StackPanel Orientation="Vertical" Margin="6,0,0,0" VerticalAlignment="Center">
-					<Button
-						Padding="8,2"
-						Margin="0,0,0,4"
-						HorizontalAlignment="Stretch"
-						HorizontalContentAlignment="Center"
-						Command="{Binding DarkenAlternatingRows}"
-						ToolTip.Tip="{Binding RowShadeTip}"
-						AutomationProperties.Name="Darken alternating row shading"
-						Content="S+" />
-					<Button
-						Padding="8,2"
-						HorizontalAlignment="Stretch"
-						HorizontalContentAlignment="Center"
-						Command="{Binding LightenAlternatingRows}"
-						ToolTip.Tip="{Binding RowShadeTip}"
-						AutomationProperties.Name="Lighten alternating row shading"
-						Content="S&#x2013;" />
-				</StackPanel>
 
 				<Button Margin="10,0,0,0" Padding="4,2" Height="40" VerticalAlignment="Center" Command="{Binding ToggleQueueHideBtn}">
 					<Path Width="20" Height="20" Stretch="Uniform" Fill="{DynamicResource IconFill}" Data="{StaticResource	LeftArrows}">

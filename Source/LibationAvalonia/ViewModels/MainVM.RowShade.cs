@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Styling;
 using ReactiveUI;
 using System;
 using System.Linq;
@@ -29,12 +30,35 @@ public partial class MainVM
 	public void DarkenAlternatingRows() => StepRowShade(RowShadeStep);
 	public void LightenAlternatingRows() => StepRowShade(-RowShadeStep);
 
-	public string RowShadeText => $"{CurrentRowShade().A * 100 / 255}%";
+	/// <summary>
+	/// The shipped shade for the current theme. Kept in step with the two
+	/// AlternatingRowBackgroundBrush entries in App.axaml.
+	/// </summary>
+	private static Color DefaultRowShade(ThemeVariant variant)
+		=> variant == ThemeVariant.Dark
+		? Color.FromArgb(0x26, 0xFF, 0xFF, 0xFF)
+		: Color.FromArgb(0x14, 0x00, 0x00, 0x00);
+
+	public void ResetAlternatingRows()
+	{
+		if (App.Current?.ActualThemeVariant is { } variant)
+			ApplyRowShade(variant, DefaultRowShade(variant));
+	}
+
+	/// <summary>The colour in use, as stored: alpha first, then RGB.</summary>
+	public string RowShadeText => $"#{CurrentRowShade().ToUInt32():X8}";
 
 	public string RowShadeTip
-		=> "Strength of the alternating row shading.\n"
-		+ "Saved per theme, so light and dark are set separately, and it appears in the theme "
-		+ $"editor as {AlternatingRowBrushKey}.";
+	{
+		get
+		{
+			var c = CurrentRowShade();
+			return $"Alternating row shading: {c.A * 100 / 255}% ({c.A} of 255).\n"
+				+ "Only the alpha changes; the colour stays whatever the theme uses.\n"
+				+ "Saved per theme, so light and dark are set separately, and it appears in the "
+				+ $"theme editor as {AlternatingRowBrushKey}.";
+		}
+	}
 
 	/// <summary>
 	/// Reads the brush actually in use rather than the stored override, so the first press
@@ -74,8 +98,20 @@ public partial class MainVM
 			if (alpha == current.A)
 				return;
 
+			ApplyRowShade(variant, Color.FromArgb((byte)alpha, current.R, current.G, current.B));
+		}
+		catch (Exception ex)
+		{
+			Serilog.Log.Logger.Error(ex, "Failed to change the alternating row shading");
+		}
+	}
+
+	private void ApplyRowShade(ThemeVariant variant, Color color)
+	{
+		try
+		{
 			var theme = ChardonnayTheme.GetLiveTheme();
-			theme.SetColor(variant, AlternatingRowBrushKey, Color.FromArgb((byte)alpha, current.R, current.G, current.B));
+			theme.SetColor(variant, AlternatingRowBrushKey, color);
 			theme.ApplyTheme(variant);
 
 			// Persist. Goes to ChardonnayTheme.json alongside every other themed colour, so
@@ -83,10 +119,11 @@ public partial class MainVM
 			theme.Save();
 
 			this.RaisePropertyChanged(nameof(RowShadeText));
+			this.RaisePropertyChanged(nameof(RowShadeTip));
 		}
 		catch (Exception ex)
 		{
-			Serilog.Log.Logger.Error(ex, "Failed to change the alternating row shading");
+			Serilog.Log.Logger.Error(ex, "Failed to apply the alternating row shading");
 		}
 	}
 }
