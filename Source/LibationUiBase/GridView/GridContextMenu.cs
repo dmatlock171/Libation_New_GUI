@@ -39,9 +39,12 @@ public class GridContextMenu
 	public bool SetDownloadedEnabled => LibraryBookEntries.Any(ge => ge.Book?.UserDefinedItem.BookStatus != LiberatedStatus.Liberated || ge.Liberate?.IsSeries is true);
 	public bool SetNotDownloadedEnabled => LibraryBookEntries.Any(ge => ge.Book?.UserDefinedItem.BookStatus != LiberatedStatus.NotLiberated || ge.Liberate?.IsSeries is true);
 	public bool ConvertToMp3Enabled => LibraryBookEntries.Any(ge => ge.Book?.UserDefinedItem.BookStatus is LiberatedStatus.Liberated);
-	public bool DownloadAsChaptersEnabled => LibraryBookEntries.Any(ge => ge.Book?.UserDefinedItem.BookStatus is not LiberatedStatus.Error);
-	public bool ReDownloadEnabled => LibraryBookEntries.Any(ge => ge.Book?.UserDefinedItem.BookStatus is LiberatedStatus.Liberated);
+	public bool DownloadAsChaptersEnabled => LibraryBookEntries.Any(ge => ge.Book?.IsAudible is true && ge.Book?.UserDefinedItem.BookStatus is not LiberatedStatus.Error);
+	public bool ReDownloadEnabled => LibraryBookEntries.Any(ge => ge.Book?.IsAudible is true && ge.Book?.UserDefinedItem.BookStatus is LiberatedStatus.Liberated);
 	public bool RemoveFromAudibleEnabled => LibraryBookEntries.Any(ge => ge.LibraryBook.IsAudiblePlus);
+	/// <summary>Bookmarks and clips live on Audible's servers, so there is nothing to fetch for a
+	/// book that never came from there. Previously ungated, which would have thrown.</summary>
+	public bool ViewBookmarksEnabled => GridEntries.Length == 1 && GridEntries[0].Book?.IsAudible is true;
 
 	private GridEntry[] GridEntries { get; }
 	public LibraryBookEntry[] LibraryBookEntries { get; }

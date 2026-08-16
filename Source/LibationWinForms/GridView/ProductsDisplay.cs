@@ -316,7 +316,7 @@ public partial class ProductsDisplay : UserControl
 		#endregion
 		#region View Bookmarks/Clips (Single book only)
 
-		if (entries.Length == 1 && entries[0] is LibraryBookEntry entry3)
+		if (ctx.ViewBookmarksEnabled && entries[0] is LibraryBookEntry entry3)
 		{
 			var bookRecordMenuItem = new ToolStripMenuItem { Text = ctx.ViewBookmarksText };
 			bookRecordMenuItem.Click += (_, _) => new BookRecordsDialog(entry3.LibraryBook).ShowDialog(this);

@@ -67,7 +67,8 @@ public class FindBetterQualityBooksViewModel : ReactiveObject
 	}
 
 	public static bool ShouldScan(LibraryBook lb)
-		=> lb.Book.ContentType is ContentType.Product //only scan books, not podcasts
+		=> lb.Book.IsAudible //a fabricated local: id would be sent to Audible and 404
+		&& lb.Book.ContentType is ContentType.Product //only scan books, not podcasts
 		&& !lb.Book.IsSpatial //skip spatial audio books. When querying the /metadata endpoint, it will only show ac-4 data for spatial audiobooks.
 		&& lb.Book.UserDefinedItem.BookStatus is LiberatedStatus.Liberated;
 

@@ -632,7 +632,7 @@ public partial class ProductsDisplay : UserControl
 		#endregion
 		#region View Bookmarks/Clips (Single book only)
 
-		if (entries.Length == 1 && entries[0] is LibraryBookEntry entry3 && this.GetParentWindow() is Window window)
+		if (ctx.ViewBookmarksEnabled && entries[0] is LibraryBookEntry entry3 && this.GetParentWindow() is Window window)
 		{
 			args.ContextMenuItems.Add(new MenuItem
 			{

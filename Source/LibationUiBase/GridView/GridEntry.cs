@@ -63,6 +63,11 @@ public abstract class GridEntry : ReactiveObject
 		get => _myRating;
 		set
 		{
+			// A rating is posted to Audible, so a book that did not come from there has nowhere to
+			// send it. Without this, clicking a star on a local book throws InvalidCredentialException
+			// from GetApiAsync -- the easiest of these to hit by accident.
+			if (Book?.IsAudible is not true) return;
+
 			if (value is not null && _myRating != value && value.OverallRating != 0 && updateReviewTask?.IsCompleted is not false)
 				updateReviewTask = UpdateRating(value);
 		}
