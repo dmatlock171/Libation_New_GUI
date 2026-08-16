@@ -289,5 +289,7 @@ public partial class MainVM
 
 		importMenuItem.Items.Add(new NativeMenuItemSeparator());
 		importMenuItem.Items.Add(new NativeMenuItem { Header = "Locate Audiobooks...", Command = ReactiveCommand.Create(LocateAudiobooksAsync) });
+		importMenuItem.Items.Add(new NativeMenuItem { Header = "Add Audiobooks from Folder...", Command = ReactiveCommand.Create(ImportLocalFolderAsync) });
+		importMenuItem.Items.Add(new NativeMenuItem { Header = "Add Books You Own Elsewhere...", Command = ReactiveCommand.Create(AddCatalogueEntriesAsync) });
 	}
 }

@@ -162,6 +162,9 @@
 						
 					<Separator />
 					<MenuItem Command="{Binding LocateAudiobooksAsync}" Header="L_ocate Audiobooks..." ToolTip.Tip="{Binding LocateAudiobooksTip}" />
+					<Separator />
+					<MenuItem Command="{Binding ImportLocalFolderAsync}" Header="Add Audiobooks from _Folder..." ToolTip.Tip="Add DRM-free audiobooks you already have on disk. Files are never moved or renamed." />
+					<MenuItem Command="{Binding AddCatalogueEntriesAsync}" Header="Add Books You _Own Elsewhere..." ToolTip.Tip="Record books you own but have no file for, so your library is complete." />
 
 					<Separator />
 					<MenuItem IsEnabled="{Binding LibraryStats?.HasBookResults, TargetNullValue=false}" Command="{Binding ExportLibraryAsync}" Header="E_xport Library..." InputGesture="ctrl+S" />

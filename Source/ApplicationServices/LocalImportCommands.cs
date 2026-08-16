@@ -83,6 +83,110 @@ public static class LocalImportCommands
 		}
 	}
 
+	#region Catalogue-only entries
+
+	/// <summary>A book you own but have no file for.</summary>
+	public record CatalogueEntry(string Title, string Author, string Narrator);
+
+	/// <summary>
+	/// Parses pasted text into catalogue entries, one book per line.
+	/// <para>
+	/// Fields are separated by a tab, a pipe, or " - ": title, then optional author, then
+	/// optional narrator. Tab and pipe are tried first because a hyphen is common inside real
+	/// titles, and splitting "Rendezvous - Book 3" into a fake author would be worse than
+	/// leaving the whole line as the title.
+	/// </para>
+	/// <para>
+	/// Blank lines are ignored, as are lines starting with #, so a pasted list can carry
+	/// headings or notes without needing to be cleaned up first.
+	/// </para>
+	/// </summary>
+	public static IReadOnlyList<CatalogueEntry> ParseCatalogueList(string? text)
+	{
+		if (string.IsNullOrWhiteSpace(text))
+			return [];
+
+		var entries = new List<CatalogueEntry>();
+
+		foreach (var rawLine in text.Split('\n'))
+		{
+			var line = rawLine.Trim().TrimEnd('\r');
+
+			if (line.Length == 0 || line.StartsWith('#'))
+				continue;
+
+			var fields
+				= line.Contains('\t') ? line.Split('\t')
+				: line.Contains('|') ? line.Split('|')
+				: line.Split(" - ");
+
+			string Field(int i) => fields.Length > i ? fields[i].Trim() : "";
+
+			var title = Field(0);
+			if (title.Length == 0)
+				continue;
+
+			entries.Add(new CatalogueEntry(title, Field(1), Field(2)));
+		}
+
+		return entries;
+	}
+
+	/// <summary>
+	/// Records books you own but have no file for, so the library shows everything rather than
+	/// only what Libation could download.
+	/// <para>
+	/// This is the answer for stores whose audio cannot legitimately leave their app. The entry
+	/// asserts ownership and nothing else: no path, no download, no audio. Entered by hand or
+	/// from a pasted list, never read out of a retailer account.
+	/// </para>
+	/// </summary>
+	public static async Task<int> AddCatalogueEntriesAsync(
+		IReadOnlyCollection<CatalogueEntry> entries,
+		CancellationToken cancellationToken = default)
+	{
+		if (entries.Count == 0)
+			return 0;
+
+		await LibraryCommands.WaitImportGateAsync(cancellationToken);
+		try
+		{
+			return LibraryCommands.DoDbSizeChangeOperation(context =>
+			{
+				var contributors = new ContributorCache(context);
+				var now = DateTime.UtcNow;
+
+				foreach (var entry in entries)
+				{
+					var author = string.IsNullOrWhiteSpace(entry.Author) ? UnknownAuthor : entry.Author;
+					var narrator = string.IsNullOrWhiteSpace(entry.Narrator) ? author : entry.Narrator;
+
+					var book = Book.CreateNonAudible(
+						BookSource.CatalogueOnly,
+						entry.Title,
+						subtitle: null,
+						description: null,
+						lengthInMinutes: 0,
+						[contributors.Get(author)],
+						[contributors.Get(narrator)],
+						PlaceholderLocale);
+
+					// Left NotLiberated on purpose. There is no file, so claiming otherwise would
+					// be a lie the grid then has to explain. Nothing will try to download it:
+					// Downloadable requires an Audible source.
+					context.Books.Add(book);
+					context.LibraryBooks.Add(new LibraryBook(book, now, LibraryBook.LocalAccount));
+				}
+			});
+		}
+		finally
+		{
+			LibraryCommands.ReleaseImportGate();
+		}
+	}
+
+	#endregion
+
 	private static int Import(IReadOnlyCollection<LocalAudiobook> books)
 	{
 		// Paths are registered after the transaction commits: FilePathCache is a separate JSON

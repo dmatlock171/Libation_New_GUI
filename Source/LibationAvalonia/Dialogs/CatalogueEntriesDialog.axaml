@@ -1,0 +1,44 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d" d:DesignWidth="560" d:DesignHeight="420"
+		MinWidth="480" MinHeight="360"
+		Width="560" Height="420"
+        x:Class="LibationAvalonia.Dialogs.CatalogueEntriesDialog"
+		xmlns:dialogs="clr-namespace:LibationAvalonia.Dialogs"
+		x:DataType="dialogs:CatalogueEntriesDialog"
+        Title="Add books you own elsewhere">
+
+	<Grid Margin="12" RowDefinitions="Auto,*,Auto,Auto">
+
+		<TextBlock Grid.Row="0" TextWrapping="Wrap" Margin="0,0,0,8">
+			One book per line. Separate the fields with a tab, a pipe, or a space-hyphen-space:<LineBreak />
+			<Run FontFamily="Consolas,monospace">Title | Author | Narrator</Run><LineBreak /><LineBreak />
+			Author and narrator are optional. Lines starting with # are ignored.
+		</TextBlock>
+
+		<TextBox
+			Grid.Row="1"
+			Name="entriesTb"
+			AcceptsReturn="True"
+			TextWrapping="NoWrap"
+			FontFamily="Consolas,monospace"
+			ScrollViewer.HorizontalScrollBarVisibility="Auto"
+			ScrollViewer.VerticalScrollBarVisibility="Auto"
+			Watermark="The Hobbit | J.R.R. Tolkien | Rob Inglis"
+			Text="{Binding PastedText, Mode=TwoWay}" />
+
+		<!-- These entries record ownership only. Saying so here rather than in a tooltip,
+		     because the alternative is a user expecting the audio to arrive. -->
+		<TextBlock Grid.Row="2" Margin="0,8,0,0" TextWrapping="Wrap" FontSize="11" Opacity="0.75">
+			These are catalogue entries: they record that you own the book so your library is
+			complete. No files are downloaded, and Libation will not try to download them.
+		</TextBlock>
+
+		<StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0" Spacing="8">
+			<Button Content="Cancel" Click="Cancel_Click" />
+			<Button Classes="SaveButton" Content="Add to library" Click="Save_Click" />
+		</StackPanel>
+	</Grid>
+</Window>
