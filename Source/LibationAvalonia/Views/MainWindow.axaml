@@ -22,9 +22,13 @@
 		     matches the rest of the ribbon. Upstream ImportIcon is an outline glyph, which at any
 		     size reads smaller than the solid icons beside it. -->
 		<StreamGeometry x:Key="RibbonScanIcon">M0,0 H60 V10 H0 Z M24,68 H36 V40 H52 L30,18 L8,40 H24 Z</StreamGeometry>
-		<!-- PDFs: a solid page with a folded corner, same 60x68 box as the others. Replaces the
+		<!-- PDFs: a page outline with a folded corner, same 60x68 box as the others. The second
+		     subpath is wound the opposite way to the first, which punches the hole rather than
+		     drawing a second shape. Filled solid it was 96% ink against 26% for the arrows, and
+		     read as a black slab twice the size of its neighbours; hollow it is 44%, in line with
+		     the hourglass and the settings bars. Replaces the
 		     upstream PdfDownloadedIcon in the ribbon only; that one still serves the grid. -->
-		<StreamGeometry x:Key="RibbonPdfIcon">M0,0 H42 L60,18 V68 H0 Z</StreamGeometry>
+		<StreamGeometry x:Key="RibbonPdfIcon">M0,0 H42 L60,18 V68 H0 Z M6,8 V60 H54 V26 H34 V8 Z</StreamGeometry>
 		<StreamGeometry x:Key="RibbonDownloadIcon">M24,0 H36 V28 H52 L30,50 L8,28 H24 Z M0,58 H60 V68 H0 Z</StreamGeometry>
 		<!-- Text wrapping: a full line, a line that stops short, and a return arrow turning
 		     down off the end of it and back to the left margin. Drawn as four solid subpaths
