@@ -24,6 +24,15 @@ public partial class MainVM
 		this.RaisePropertyChanged(nameof(GridTextWrappingTip));
 	}
 
+	/// <summary> Show the ribbon toolbar. Off gives the grid the extra row back. </summary>
+	public bool ShowRibbon => Configuration.Instance.ShowRibbon;
+
+	public void ToggleShowRibbon()
+	{
+		Configuration.Instance.ShowRibbon = !Configuration.Instance.ShowRibbon;
+		this.RaisePropertyChanged(nameof(ShowRibbon));
+	}
+
 	/// <summary> Hide imprints and brands from the last-name author columns. </summary>
 	public bool StripNonPersonAuthors => Configuration.Instance.StripNonPersonAuthors;
 

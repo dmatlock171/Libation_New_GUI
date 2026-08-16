@@ -117,6 +117,9 @@ public partial class Configuration
 	[Description("Book display font size")]
 	public float GridFontScaleFactor { get => float.Min(2, float.Max(0.5f, GetNonString(defaultValue: 1f))); set => SetNonString(value); }
 
+	[Description("Show the ribbon toolbar above the library")]
+	public bool ShowRibbon { get => GetNonString(defaultValue: true); set => SetNonString(value); }
+
 	[Description("Wrap text in grid columns that are too narrow to fit")]
 	public bool GridTextWrapping { get => GetNonString(defaultValue: false); set => SetNonString(value); }
 

@@ -178,6 +178,7 @@
 						<MenuItem Command="{Binding ShowThemeEditor}" Header="_Edit colors..." />
 					</MenuItem>
 					<MenuItem Command="{Binding ToggleGridTextWrapping}" Header="_Wrap text in narrow columns" ToggleType="CheckBox" IsChecked="{Binding GridTextWrapping, Mode=OneWay}" />
+					<MenuItem Command="{Binding ToggleShowRibbon}" Header="Show _Ribbon" ToggleType="CheckBox" IsChecked="{Binding ShowRibbon, Mode=OneWay}" />
 					<MenuItem Command="{Binding ToggleStripNonPersonAuthors}" Header="Hide _imprints from last-name columns" ToggleType="CheckBox" IsChecked="{Binding StripNonPersonAuthors, Mode=OneWay}" ToolTip.Tip="Hides non-people such as 'The Great Courses' from the last-name author and narrator columns" />
 					<Separator />
 					<MenuItem Name="quickFiltersToolStripMenuItem" Header="Quick _Filters" ItemsSource="{Binding QuickFilterMenuItems}" />
@@ -216,8 +217,13 @@
 		</Grid>
 		</Border>
 		<!-- Buttons and Search Box -->
-		<!-- Ribbon: common actions that would otherwise be buried in menus -->
-		<Border Grid.Row="1" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource GridLines}">
+		<!-- Ribbon: common actions that would otherwise be buried in menus.
+		     Grouped like Word: each section is its own row of buttons with a caption
+		     underneath, separated by a rule. IsVisible lets it be hidden entirely -->
+		<Border
+			Grid.Row="1"
+			IsVisible="{Binding ShowRibbon}"
+			BorderThickness="0,0,0,1" BorderBrush="{DynamicResource GridLines}">
 			<StackPanel Orientation="Horizontal" Margin="8,4" Spacing="4">
 				<StackPanel.Styles>
 					<Style Selector="Button">
@@ -245,112 +251,147 @@
 						     both lines rather than left-aligning the second. -->
 						<Setter Property="TextAlignment" Value="Center" />
 					</Style>
+					<!-- Section caption. Quiet on purpose: it names the group without
+					     competing with the buttons above it. -->
+					<Style Selector="TextBlock.ribbonSection">
+						<Setter Property="FontSize" Value="10" />
+						<Setter Property="Opacity" Value="0.6" />
+						<Setter Property="HorizontalAlignment" Value="Center" />
+						<Setter Property="Margin" Value="0,3,0,0" />
+					</Style>
+					<Style Selector="StackPanel.ribbonSection">
+						<Setter Property="Orientation" Value="Vertical" />
+					</Style>
+					<Style Selector="StackPanel.ribbonSectionButtons">
+						<Setter Property="Orientation" Value="Horizontal" />
+						<Setter Property="Spacing" Value="4" />
+					</Style>
+					<Style Selector="Border.ribbonDivider">
+						<Setter Property="Width" Value="1" />
+						<Setter Property="Margin" Value="4,2" />
+						<Setter Property="Background" Value="{DynamicResource GridLines}" />
+					</Style>
 				</StackPanel.Styles>
 
-				<Button
-					IsVisible="{Binding OneAccount}"
-					IsEnabled="{Binding !ActivelyScanning}"
-					Command="{Binding ScanAccountAsync}"
-					ToolTip.Tip="Scan your Audible library for new books">
-					<StackPanel>
-						<Path Data="{StaticResource ImportIcon}" />
-						<TextBlock Text="Scan" />
+				<!-- Library -->
+				<StackPanel Classes="ribbonSection">
+					<StackPanel Classes="ribbonSectionButtons">
+						<Button
+							IsVisible="{Binding OneAccount}"
+							IsEnabled="{Binding !ActivelyScanning}"
+							Command="{Binding ScanAccountAsync}"
+							ToolTip.Tip="Scan your Audible library for new books">
+							<StackPanel>
+								<Path Data="{StaticResource ImportIcon}" />
+								<TextBlock Text="Scan" />
+							</StackPanel>
+						</Button>
+						<Button
+							IsVisible="{Binding MultipleAccounts}"
+							IsEnabled="{Binding !ActivelyScanning}"
+							Command="{Binding ScanAllAccountsAsync}"
+							ToolTip.Tip="Scan all accounts for new books">
+							<StackPanel>
+								<Path Data="{StaticResource ImportIcon}" />
+								<TextBlock Text="Scan all" />
+							</StackPanel>
+						</Button>
 					</StackPanel>
-				</Button>
-				<Button
-					IsVisible="{Binding MultipleAccounts}"
-					IsEnabled="{Binding !ActivelyScanning}"
-					Command="{Binding ScanAllAccountsAsync}"
-					ToolTip.Tip="Scan all accounts for new books">
-					<StackPanel>
-						<Path Data="{StaticResource ImportIcon}" />
-						<TextBlock Text="Scan all" />
-					</StackPanel>
-				</Button>
+					<TextBlock Classes="ribbonSection" Text="Library" />
+				</StackPanel>
+				<Border Classes="ribbonDivider" />
 
-				<Border Width="1" Margin="4,4" Background="{DynamicResource GridLines}" />
+				<!-- Download -->
+				<StackPanel Classes="ribbonSection">
+					<StackPanel Classes="ribbonSectionButtons">
+						<Button
+							Command="{Binding BackupAllBooks}"
+							ToolTip.Tip="{Binding BookBackupsToolStripText}">
+							<StackPanel>
+								<Path Data="{StaticResource RibbonDownloadIcon}" />
+								<TextBlock Text="Download&#x0A;ALL" />
+							</StackPanel>
+						</Button>
+						<Button
+							Command="{Binding LiberateVisible}"
+							IsEnabled="{Binding AnyVisibleNotLiberated}"
+							ToolTip.Tip="{Binding LiberateVisibleToolStripText}">
+							<StackPanel>
+								<Path Data="{StaticResource RibbonDownloadIcon}" />
+								<TextBlock Text="Download&#x0A;Books" />
+							</StackPanel>
+						</Button>
+						<Button
+							Command="{Binding BackupAllPdfs}"
+							ToolTip.Tip="{Binding PdfBackupsToolStripText}">
+							<StackPanel>
+								<Path Data="{StaticResource PdfDownloadedIcon}" />
+								<TextBlock Text="Download&#x0A;PDFs" />
+							</StackPanel>
+						</Button>
+					</StackPanel>
+					<TextBlock Classes="ribbonSection" Text="Download" />
+				</StackPanel>
+				<Border Classes="ribbonDivider" />
 
-				<Button
-					Command="{Binding BackupAllBooks}"
-					ToolTip.Tip="{Binding BookBackupsToolStripText}">
-					<StackPanel>
-						<Path Data="{StaticResource RibbonDownloadIcon}" />
-						<TextBlock Text="Download&#x0A;ALL" />
+				<!-- Filter. At Risk leads, then the saved quick filters, which are last in the
+				     whole ribbon so a narrow window clips these rather than Scan or Download. -->
+				<StackPanel Classes="ribbonSection">
+					<StackPanel Classes="ribbonSectionButtons">
+						<Button
+							Command="{Binding FilterAtRisk}"
+							ToolTip.Tip="{Binding AtRiskTip}">
+							<StackPanel>
+								<Path Data="{StaticResource RibbonAtRiskIcon}" />
+								<TextBlock Text="At&#x0A;Risk" />
+							</StackPanel>
+						</Button>
+						<ItemsControl ItemsSource="{Binding RibbonQuickFilters}">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<StackPanel Orientation="Horizontal" Spacing="4" />
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
+							<ItemsControl.ItemTemplate>
+								<DataTemplate DataType="vm:QuickFilterButton">
+									<Button
+										Command="{Binding Apply}"
+										ToolTip.Tip="{Binding Tip}"
+										VerticalAlignment="Stretch"
+										VerticalContentAlignment="Center">
+										<TextBlock Text="{Binding Label}" />
+									</Button>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+						</ItemsControl>
 					</StackPanel>
-				</Button>
-				<Button
-					Command="{Binding LiberateVisible}"
-					IsEnabled="{Binding AnyVisibleNotLiberated}"
-					ToolTip.Tip="{Binding LiberateVisibleToolStripText}">
-					<StackPanel>
-						<Path Data="{StaticResource RibbonDownloadIcon}" />
-						<TextBlock Text="Download&#x0A;Books" />
-					</StackPanel>
-				</Button>
-				<Button
-					Command="{Binding BackupAllPdfs}"
-					ToolTip.Tip="{Binding PdfBackupsToolStripText}">
-					<StackPanel>
-						<Path Data="{StaticResource PdfDownloadedIcon}" />
-						<TextBlock Text="Download&#x0A;PDFs" />
-					</StackPanel>
-				</Button>
+					<TextBlock Classes="ribbonSection" Text="Filter" />
+				</StackPanel>
+				<Border Classes="ribbonDivider" />
 
-				<Button
-					Command="{Binding FilterAtRisk}"
-					ToolTip.Tip="{Binding AtRiskTip}">
-					<StackPanel>
-						<Path Data="{StaticResource RibbonAtRiskIcon}" />
-						<TextBlock Text="At&#x0A;Risk" />
+				<!-- Tools -->
+				<StackPanel Classes="ribbonSection">
+					<StackPanel Classes="ribbonSectionButtons">
+						<Button
+							IsEnabled="{Binding LibraryStats?.HasBookResults, TargetNullValue=false}"
+							Command="{Binding ExportLibraryAsync}"
+							ToolTip.Tip="Export your library to a file">
+							<StackPanel>
+								<Path Data="{StaticResource RibbonExportIcon}" />
+								<TextBlock Text="Export" />
+							</StackPanel>
+						</Button>
+						<Button
+							Command="{Binding ShowSettingsAsync}"
+							ToolTip.Tip="Open settings">
+							<StackPanel>
+								<Path Data="{StaticResource RibbonSettingsIcon}" />
+								<TextBlock Text="Settings" />
+							</StackPanel>
+						</Button>
 					</StackPanel>
-				</Button>
-
-				<Border Width="1" Margin="4,4" Background="{DynamicResource GridLines}" />
-
-				<Button
-					IsEnabled="{Binding LibraryStats?.HasBookResults, TargetNullValue=false}"
-					Command="{Binding ExportLibraryAsync}"
-					ToolTip.Tip="Export your library to a file">
-					<StackPanel>
-						<Path Data="{StaticResource RibbonExportIcon}" />
-						<TextBlock Text="Export" />
-					</StackPanel>
-				</Button>
-				<Button
-					Command="{Binding ShowSettingsAsync}"
-					ToolTip.Tip="Open settings">
-					<StackPanel>
-						<Path Data="{StaticResource RibbonSettingsIcon}" />
-						<TextBlock Text="Settings" />
-					</StackPanel>
-				</Button>
-
-				<!-- Saved quick filters, mirrored from the Quick Filters menu. Last in the
-				     ribbon deliberately: if the window is too narrow for everything, these are
-				     the ones that should clip rather than Scan or Download. IsVisible keeps the
-				     separator from appearing on its own when no filters are saved. -->
-				<Border
-					Width="1" Margin="4,4"
-					Background="{DynamicResource GridLines}"
-					IsVisible="{Binding AnyRibbonQuickFilters}" />
-				<ItemsControl ItemsSource="{Binding RibbonQuickFilters}">
-					<ItemsControl.ItemsPanel>
-						<ItemsPanelTemplate>
-							<StackPanel Orientation="Horizontal" Spacing="4" />
-						</ItemsPanelTemplate>
-					</ItemsControl.ItemsPanel>
-					<ItemsControl.ItemTemplate>
-						<DataTemplate DataType="vm:QuickFilterButton">
-							<Button
-								Command="{Binding Apply}"
-								ToolTip.Tip="{Binding Tip}"
-								VerticalAlignment="Stretch"
-								VerticalContentAlignment="Center">
-								<TextBlock Text="{Binding Label}" />
-							</Button>
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>
+					<TextBlock Classes="ribbonSection" Text="Tools" />
+				</StackPanel>
 			</StackPanel>
 		</Border>
 
