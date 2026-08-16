@@ -71,11 +71,11 @@ Menus were regrouped, and Settings gained a **Diagnostics...** entry (see below)
 - **Sort order and column widths persist** across restarts (`GridSortColumn`, `GridSortDescending`).
 - **Text size (A) and row height (R) controls** in the toolbar, plus `Ctrl`+`+`/`-` and
   `Ctrl`+mouse wheel to scale both at once.
-  - **A** changes text size only; **R** changes row height only.
-  - Rows automatically grow past the R setting if the text would otherwise be clipped, so the two
-    controls are independent without letting you produce an unreadable grid. A consequence worth
-    knowing: while the font scale is the larger of the two, R− appears to do nothing, because the
-    text is what is setting the row height.
+  - **A** changes text size and nothing else. **R** changes row height and nothing else.
+  - The two are fully decoupled, which means text large enough to outgrow its row will be
+    clipped; the fix is to press R+. Sizing rows automatically to fit the text was tried and
+    removed: it left A still moving the rows, and left R doing nothing at all whenever the font
+    scale happened to be ahead of it.
 - **Text wrapping** in columns too narrow to fit their contents (`GridTextWrapping`, off by default).
 - **Surname-first author and narrator columns**, so sorting by author behaves the way a bookshelf does.
 - **Imprint filtering** (`StripNonPersonAuthors`, off by default) hides brands such as
