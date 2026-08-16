@@ -11,6 +11,10 @@ public static class LibraryBookQueries
 {
 	private static System.Linq.Expressions.Expression<System.Func<LibraryBook, bool>> IsUnLiberatedExpression { get; }
 		= lb =>
+		// Only Audible books can be downloaded. Local ones already have their file and
+		// catalogue-only ones have none by definition, so neither is ever "unliberated".
+		// Compared against the column rather than Book.IsAudible so EF can translate it.
+		lb.Book.Source == BookSource.Audible &&
 		!lb.AbsentFromLastScan &&
 		(lb.Book.ContentType == ContentType.Product || lb.Book.ContentType == ContentType.Episode) &&
 		(lb.Book.UserDefinedItem.PdfStatus == LiberatedStatus.NotLiberated || lb.Book.UserDefinedItem.BookStatus == LiberatedStatus.NotLiberated || lb.Book.UserDefinedItem.BookStatus == LiberatedStatus.PartialDownload);
@@ -136,7 +140,12 @@ public static class LibraryBookQueries
 	extension(LibraryBook libraryBook)
 	{
 		public bool HasSeriesId(string audibleSeriesId) => libraryBook.Book.SeriesLink?.Any(s => s.Series.AudibleSeriesId.EqualsInsensitive(audibleSeriesId)) is true;
-		public bool Downloadable => !libraryBook.AbsentFromLastScan && libraryBook.Book.ContentType is ContentType.Product or ContentType.Episode;
+		/// <summary>
+		/// Whether Libation could fetch this book. Non-Audible books never qualify: a local book
+		/// already has its file and a catalogue-only entry has no audio to fetch. Without this,
+		/// both would appear in Download ALL and be queued for a download that cannot happen.
+		/// </summary>
+		public bool Downloadable => libraryBook.Book.IsAudible && !libraryBook.AbsentFromLastScan && libraryBook.Book.ContentType is ContentType.Product or ContentType.Episode;
 		public bool NeedsPdfDownload => libraryBook.Downloadable && libraryBook.Book.UserDefinedItem.PdfStatus is LiberatedStatus.NotLiberated;
 		public bool NeedsBookDownload => libraryBook.Downloadable && libraryBook.Book.UserDefinedItem.BookStatus is LiberatedStatus.NotLiberated or LiberatedStatus.PartialDownload;
 	}
