@@ -235,6 +235,14 @@ Requires the .NET 10 SDK. The Avalonia UI uses Avalonia 12.
 .\run-dev.ps1 -FilesDir <path>         # or point it somewhere else
 ```
 
+```powershell
+.\clean-build.ps1              # wipe bin/obj, rebuild, report
+.\clean-build.ps1 -Run         # ...and launch
+```
+
+Avalonia compiles XAML into the assembly at build time, so a stale `obj` can leave old markup in
+a new binary. If the UI does not match the source, rule that out first.
+
 `run-dev.ps1` sets `LIBATION_FILES_DIR` for that process only, so a development build can be run
 against a scratch library without touching the real one. Note that the variable is ignored if the
 directory does not exist — Settings → Diagnostics will say so if that happens.
