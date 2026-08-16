@@ -18,6 +18,10 @@
 		<StreamGeometry x:Key="RibbonExportIcon">M0,44 H12 V56 H48 V44 H60 V68 H0 Z M24,0 H36 V28 H52 L30,50 L8,28 H24 Z</StreamGeometry>
 		<StreamGeometry x:Key="RibbonSettingsIcon">M0,6 H60 V16 H0 Z M0,26 H60 V36 H0 Z M0,46 H60 V56 H0 Z</StreamGeometry>
 		<StreamGeometry x:Key="RibbonDownloadIcon">M24,0 H36 V28 H52 L30,50 L8,28 H24 Z M0,58 H60 V68 H0 Z</StreamGeometry>
+		<!-- Text wrapping: a full line, a line that stops short, and a return arrow turning
+		     down off the end of it and back to the left margin. Drawn as four solid subpaths
+		     with no overlaps, so it fills predictably at any size. -->
+		<StreamGeometry x:Key="WrapTextIcon">M0,0 H64 V8 H0 Z M0,16 H50 V24 H0 Z M56,16 H64 V40 H56 Z M26,32 H64 V40 H26 V48 L8,36 L26,24 Z</StreamGeometry>
 	</Window.Resources>
 
 	<Window.KeyBindings>
@@ -428,8 +432,17 @@
 					Command="{Binding ToggleGridTextWrapping}"
 					IsChecked="{Binding GridTextWrapping, Mode=OneWay}"
 					ToolTip.Tip="Wrap text that is too wide for its column, instead of clipping it. Wrapped text still needs the room to show: use R+ if rows are too short for the extra lines."
-					AutomationProperties.Name="Toggle text wrapping in grid columns"
-					Content="W" />
+					AutomationProperties.Name="Toggle text wrapping in grid columns">
+					<!-- The filter toolbar has no Path styling of its own, unlike the ribbon,
+					     so size and fill are set here. AutomationProperties.Name above carries
+					     the meaning now that there is no letter to read. -->
+					<Path
+						Width="18"
+						Height="14"
+						Stretch="Uniform"
+						Fill="{DynamicResource IconFill}"
+						Data="{StaticResource WrapTextIcon}" />
+				</ToggleButton>
 
 				<Button Margin="10,0,0,0" Padding="4,2" Height="40" VerticalAlignment="Center" Command="{Binding ToggleQueueHideBtn}">
 					<Path Width="20" Height="20" Stretch="Uniform" Fill="{DynamicResource IconFill}" Data="{StaticResource	LeftArrows}">
