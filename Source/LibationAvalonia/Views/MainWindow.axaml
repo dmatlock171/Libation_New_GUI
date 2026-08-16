@@ -237,8 +237,12 @@
 						<Setter Property="HorizontalAlignment" Value="Center" />
 						<Setter Property="Spacing" Value="3" />
 					</Style>
+					<!-- Height only, no Width. With Uniform stretch inside a fixed 18x18 box, a
+					     geometry wider than it is tall fits to the width and comes out short:
+					     the Settings bars rendered 15px against everyone else's 18px. Constraining
+					     only the height makes every icon the same height and lets the width follow
+					     the artwork. -->
 					<Style Selector="Button Path">
-						<Setter Property="Width" Value="18" />
 						<Setter Property="Height" Value="18" />
 						<Setter Property="Stretch" Value="Uniform" />
 						<Setter Property="HorizontalAlignment" Value="Center" />
