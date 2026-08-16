@@ -154,6 +154,60 @@ public class SearchEngine
 		}
 	}
 
+	#region schema fingerprint
+
+	private const string SchemaFileName = "index-schema.txt";
+
+	/// <summary>
+	/// Identifies the set of fields this build indexes. Adding a field to
+	/// <see cref="FieldIndexRules"/> changes it, which is the point: an index written by an
+	/// older build simply has no such field, so queries against it match nothing and look like
+	/// a broken feature rather than a stale index.
+	/// </summary>
+	public static string SchemaFingerprint { get; }
+		= string.Join(",", FieldIndexRules
+			.SelectMany(r => r.FieldNames)
+			.Select(n => n.ToLowerInvariant())
+			.OrderBy(n => n, StringComparer.Ordinal));
+
+	private string SchemaFilePath => Path.Combine(SearchEngineDirectory, SchemaFileName);
+
+	/// <summary>
+	/// False when the index was built by a version that indexed a different set of fields, or
+	/// predates this check entirely. Treated as a reason to rebuild, not an error.
+	/// </summary>
+	public bool IndexSchemaIsCurrent
+	{
+		get
+		{
+			try
+			{
+				return File.Exists(SchemaFilePath)
+					&& File.ReadAllText(SchemaFilePath).Trim() == SchemaFingerprint;
+			}
+			catch (Exception ex)
+			{
+				Serilog.Log.Logger.Debug(ex, "Could not read the search index schema fingerprint at {Path}", SchemaFilePath);
+				return false;
+			}
+		}
+	}
+
+	private void writeSchemaFingerprint()
+	{
+		try
+		{
+			File.WriteAllText(SchemaFilePath, SchemaFingerprint);
+		}
+		catch (Exception ex)
+		{
+			// Not fatal. The cost is re-checking, and possibly rebuilding, next launch.
+			Serilog.Log.Logger.Warning(ex, "Could not write the search index schema fingerprint to {Path}", SchemaFilePath);
+		}
+	}
+
+	#endregion
+
 	private void createNewIndexCore(List<LibraryBook> library, bool overwrite)
 	{
 		bool indexExists;
@@ -170,8 +224,13 @@ public class SearchEngine
 			}
 		}
 
-		if (!indexExists)
+		// A schema change makes the old index useless for the new field even though it is
+		// perfectly readable, so treat it the same as a missing index.
+		if (!indexExists || !IndexSchemaIsCurrent)
+		{
 			deleteAllSearchIndexFiles(SearchEngineDirectory);
+			indexExists = false;
+		}
 
 		// location of index/create the index
 		using var index = getIndex();
@@ -185,6 +244,8 @@ public class SearchEngine
 			var doc = createBookIndexDocument(libraryBook);
 			ixWriter.AddDocument(doc);
 		}
+
+		writeSchemaFingerprint();
 	}
 
 	public SearchEngine(string? directory = null)

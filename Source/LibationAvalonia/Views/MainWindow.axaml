@@ -403,7 +403,7 @@
 					Height="28"
 					VerticalContentAlignment="Center"
 					Click="ClearFilterButton_Click"
-					Content="×"
+					Content="CLEAR"
 					ToolTip.Tip="Clear filter" />
 			</Grid>
 

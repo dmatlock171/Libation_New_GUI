@@ -13,6 +13,9 @@ public static class SearchEngineCommands
 	/// <summary>Serializes all search index access so only one reader/writer is active at a time, avoiding write.lock contention.</summary>
 	private static readonly object IndexLock = new();
 
+	/// <summary>The field set only changes between builds, so checking once per process is enough.</summary>
+	private static bool schemaChecked;
+
 	#region Search
 	public static SearchResultSet Search(string searchString) => performSafeQuery(e =>
 		e.Search(searchString)
@@ -25,6 +28,19 @@ public static class SearchEngineCommands
 			var engine = new SearchEngine();
 			try
 			{
+				// An index written before a field was added is readable but silently answers
+				// nothing for that field, so a new search feature looks broken rather than
+				// stale. Rebuild once, the same way a corrupt index is handled below.
+				if (!schemaChecked)
+				{
+					schemaChecked = true;
+					if (!engine.IndexSchemaIsCurrent)
+					{
+						Log.Information("Search index was built for a different set of fields; rebuilding.");
+						fullReIndex(engine);
+					}
+				}
+
 				return func(engine);
 			}
 			catch (FileNotFoundException)
