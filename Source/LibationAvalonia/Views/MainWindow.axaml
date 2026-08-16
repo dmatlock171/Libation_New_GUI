@@ -589,6 +589,30 @@
 					</Panel>
 				</Button>
 
+				<!-- Shading strength for alternating rows, stacked to match the two rows of A
+				     and R beside it. Writes the alpha into the themed brush, so it persists per
+				     theme and stays visible in the theme editor rather than becoming a second,
+				     competing setting. -->
+				<StackPanel Orientation="Vertical" Margin="6,0,0,0" VerticalAlignment="Center">
+					<Button
+						Padding="8,2"
+						Margin="0,0,0,4"
+						HorizontalAlignment="Stretch"
+						HorizontalContentAlignment="Center"
+						Command="{Binding DarkenAlternatingRows}"
+						ToolTip.Tip="{Binding RowShadeTip}"
+						AutomationProperties.Name="Darken alternating row shading"
+						Content="S+" />
+					<Button
+						Padding="8,2"
+						HorizontalAlignment="Stretch"
+						HorizontalContentAlignment="Center"
+						Command="{Binding LightenAlternatingRows}"
+						ToolTip.Tip="{Binding RowShadeTip}"
+						AutomationProperties.Name="Lighten alternating row shading"
+						Content="S&#x2013;" />
+				</StackPanel>
+
 				<Button Margin="10,0,0,0" Padding="4,2" Height="40" VerticalAlignment="Center" Command="{Binding ToggleQueueHideBtn}">
 					<Path Width="20" Height="20" Stretch="Uniform" Fill="{DynamicResource IconFill}" Data="{StaticResource	LeftArrows}">
 						<Path.RenderTransform>
