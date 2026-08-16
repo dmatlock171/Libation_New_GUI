@@ -17,6 +17,14 @@
 		<!-- Simple shapes for ribbon actions Libation has no existing icon for. -->
 		<StreamGeometry x:Key="RibbonExportIcon">M0,44 H12 V56 H48 V44 H60 V68 H0 Z M24,0 H36 V28 H52 L30,50 L8,28 H24 Z</StreamGeometry>
 		<StreamGeometry x:Key="RibbonSettingsIcon">M0,0 H60 V12 H0 Z M0,28 H60 V40 H0 Z M0,56 H60 V68 H0 Z</StreamGeometry>
+		<!-- Scan: the download arrow mirrored, pointing up into a bar. Deliberately the same
+		     drawing as Download so the pair reads as "bring in" and "take out", and solid so it
+		     matches the rest of the ribbon. Upstream ImportIcon is an outline glyph, which at any
+		     size reads smaller than the solid icons beside it. -->
+		<StreamGeometry x:Key="RibbonScanIcon">M0,0 H60 V10 H0 Z M24,68 H36 V40 H52 L30,18 L8,40 H24 Z</StreamGeometry>
+		<!-- PDFs: a solid page with a folded corner, same 60x68 box as the others. Replaces the
+		     upstream PdfDownloadedIcon in the ribbon only; that one still serves the grid. -->
+		<StreamGeometry x:Key="RibbonPdfIcon">M0,0 H42 L60,18 V68 H0 Z</StreamGeometry>
 		<StreamGeometry x:Key="RibbonDownloadIcon">M24,0 H36 V28 H52 L30,50 L8,28 H24 Z M0,58 H60 V68 H0 Z</StreamGeometry>
 		<!-- Text wrapping: a full line, a line that stops short, and a return arrow turning
 		     down off the end of it and back to the left margin. Drawn as four solid subpaths
@@ -299,7 +307,7 @@
 								Command="{Binding ScanAccountAsync}"
 								ToolTip.Tip="Scan your Audible library for new books">
 								<StackPanel>
-									<Path Data="{StaticResource ImportIcon}" />
+									<Path Data="{StaticResource RibbonScanIcon}" />
 									<TextBlock Text="Scan" />
 								</StackPanel>
 							</Button>
@@ -309,7 +317,7 @@
 								Command="{Binding ScanAllAccountsAsync}"
 								ToolTip.Tip="Scan all accounts for new books">
 								<StackPanel>
-									<Path Data="{StaticResource ImportIcon}" />
+									<Path Data="{StaticResource RibbonScanIcon}" />
 									<TextBlock Text="Scan all" />
 								</StackPanel>
 							</Button>
@@ -342,7 +350,7 @@
 								Command="{Binding BackupAllPdfs}"
 								ToolTip.Tip="{Binding PdfBackupsToolStripText}">
 								<StackPanel>
-									<Path Data="{StaticResource PdfDownloadedIcon}" />
+									<Path Data="{StaticResource RibbonPdfIcon}" />
 									<TextBlock Text="Download&#x0A;PDFs" />
 								</StackPanel>
 							</Button>
@@ -501,6 +509,16 @@
 					     A never moves the rows, R has its whole range regardless of font size.
 					     Ctrl+Plus/Minus and Ctrl+wheel keep the zoom-everything behaviour. -->
 					<StackPanel Orientation="Vertical" Margin="10,0,0,0">
+						<StackPanel.Styles>
+							<!-- One width for all nine stepper buttons. They used to size to their content, and
+							     S is a narrower glyph than A or R in a proportional font, so each S button came
+							     out slightly small and the error accumulated: S+ sat left of A+ and R+. -->
+							<Style Selector="Button">
+								<Setter Property="Width" Value="38" />
+								<Setter Property="Padding" Value="0" />
+								<Setter Property="HorizontalContentAlignment" Value="Center" />
+							</Style>
+						</StackPanel.Styles>
 						<StackPanel Orientation="Horizontal">
 							<!-- Fixed width and right-aligned so the A and R buttons below stay
 							     in line as the numbers change width. -->
