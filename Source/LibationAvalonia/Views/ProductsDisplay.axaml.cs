@@ -203,36 +203,22 @@ public partial class ProductsDisplay : UserControl
 
 	#endregion
 
-	private const float MinGridScale = 0.5f;
-	private const float MaxGridScale = 2f;
-	private const float GridScaleStep = 0.1f;
-
 	private void ProductsGrid_CtrlWheelZoom(object? sender, PointerWheelEventArgs e)
 	{
 		if (!e.KeyModifiers.HasFlag(KeyModifiers.Control))
 			return;
 
-		// Wheel up (positive Y) enlarges, wheel down shrinks.
-		var delta = e.Delta.Y > 0 ? GridScaleStep : -GridScaleStep;
+		// Wheel up (positive Y) enlarges, wheel down shrinks. Stepping goes through
+		// GridScaling so the wheel lands on the same round sizes as the toolbar buttons;
+		// this used to add 0.1 to the scale factors and produced sizes like 12.1px.
+		var direction = e.Delta.Y > 0 ? 1 : -1;
 
-		var config = Configuration.Instance;
-		var fontScale = ClampGridScale(config.GridFontScaleFactor + delta);
-		var gridScale = ClampGridScale(config.GridScaleFactor + delta);
-
-		if (fontScale != config.GridFontScaleFactor)
-			config.GridFontScaleFactor = fontScale;
-
-		if (gridScale != config.GridScaleFactor)
-			config.GridScaleFactor = gridScale;
+		GridScaling.StepFontSize(direction);
+		GridScaling.StepRowHeight(direction);
 
 		// Prevent the grid from also scrolling.
 		e.Handled = true;
 	}
-
-	private static float ClampGridScale(float scale)
-		=> scale < MinGridScale ? MinGridScale
-		: scale > MaxGridScale ? MaxGridScale
-		: scale;
 
 	private void ProductsGrid_PointerPressedMacContextMenu(object? sender, PointerPressedEventArgs e)
 	{
@@ -334,16 +320,12 @@ public partial class ProductsDisplay : UserControl
 	// fonts, row height touches only rows. Sizing rows to the larger of the two was tried and
 	// removed — it meant the text buttons still grew the rows, and left the row-height buttons
 	// doing nothing at all whenever the font scale was ahead of them.
-	/// <summary>Body text size at scale 1. Public so the toolbar can show the size actually in
-	/// use rather than keeping a second copy of the number.</summary>
-	public const double BaseTextFontSize = 11;
-
 	private void setFontScale(double scaleFactor)
 	{
 		const double H1FontSize = 14;
 		const double H2FontSize = 12;
 
-		fontSizeSetter.Value = BaseTextFontSize * scaleFactor;
+		fontSizeSetter.Value = GridScaling.BaseTextFontSize * scaleFactor;
 		fontSizeH1Setter.Value = H1FontSize * scaleFactor;
 		fontSizeH2Setter.Value = H2FontSize * scaleFactor;
 
@@ -370,10 +352,6 @@ public partial class ProductsDisplay : UserControl
 		productsGrid.Styles.Add(textWrapStyle);
 	}
 
-	/// <summary>Row height at scale 1. Public for the same reason as
-	/// <see cref="BaseTextFontSize"/>.</summary>
-	public const double BaseRowHeight = 80;
-
 	/// <summary>
 	/// Row height, and the two fixed-width columns that have to match it. Driven by
 	/// GridScaleFactor alone — the font scale deliberately has no say here, so the R controls
@@ -396,7 +374,7 @@ public partial class ProductsDisplay : UserControl
 					break;
 			}
 		}
-		rowHeightSetter.Value = BaseRowHeight * scaleFactor;
+		rowHeightSetter.Value = GridScaling.BaseRowHeight * scaleFactor;
 		productsGrid.Styles.Remove(rowHeightStyle);
 		productsGrid.Styles.Add(rowHeightStyle);
 	}

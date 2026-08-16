@@ -74,6 +74,9 @@ Menus were regrouped, and Settings gained a **Diagnostics...** entry (see below)
   - **A** changes text size and nothing else. **R** changes row height and nothing else.
   - Each row of buttons shows the size currently in effect — text size in px beside A, row
     height in px beside R — so the controls are not two pairs of unlabelled arrows.
+  - Sizes step in round numbers: 0.5px for text, 5px for rows. Upstream steps the underlying
+    scale factor by 0.1, which lands on sizes like 12.1px. A value left on an odd number by an
+    older build or by the Settings slider snaps to the next round one on the first press.
   - The two are fully decoupled, which means text large enough to outgrow its row will be
     clipped; the fix is to press R+. Sizing rows automatically to fit the text was tried and
     removed: it left A still moving the rows, and left R doing nothing at all whenever the font
