@@ -428,10 +428,15 @@
 				Margin="10,0,10,0"
 				HorizontalAlignment="Stretch"
 				VerticalAlignment="Center"
-				ColumnDefinitions="*,Auto,Auto"
+				ColumnDefinitions="Auto,*,Auto,Auto,Auto"
 				IsVisible="{Binding !RemoveButtonsVisible}">
-				<TextBox
+				<TextBlock
 					Grid.Column="0"
+					Margin="0,0,8,0"
+					VerticalAlignment="Center"
+					Text="Filter" />
+				<TextBox
+					Grid.Column="1"
 					Name="filterSearchTb"
 					Height="28"
 					VerticalContentAlignment="Center"
@@ -440,8 +445,22 @@
 					ScrollViewer.VerticalScrollBarVisibility="Disabled"
 					Text="{Binding SelectedNamedFilter.Filter, Mode=OneWay}"
 					KeyDown="filterSearchTb_KeyPress" />
+				<!-- Applies what is in the box. Same height as CLEAR beside it; it used to sit
+				     in the right-hand group, away from the box it acts on. -->
 				<Button
-					Grid.Column="1"
+					Grid.Column="2"
+					Name="filterBtn"
+					Margin="6,0,0,0"
+					Padding="10,2"
+					Height="28"
+					VerticalContentAlignment="Center"
+					HorizontalContentAlignment="Center"
+					Command="{Binding FilterBtn}"
+					CommandParameter="{Binding #filterSearchTb.Text}"
+					Content="Filter"
+					ToolTip.Tip="Apply the filter in the box" />
+				<Button
+					Grid.Column="3"
 					Margin="6,0,0,0"
 					Padding="10,2"
 					Height="28"
@@ -451,7 +470,7 @@
 					ToolTip.Tip="Clear filter" />
 				<!-- Next to CLEAR because both act on whatever is currently in the box. -->
 				<Button
-					Grid.Column="2"
+					Grid.Column="4"
 					Name="addQuickFilterBtn"
 					Margin="6,0,0,0"
 					Padding="10,2"
@@ -463,8 +482,6 @@
 			</Grid>
 
 			<StackPanel Grid.Column="2" Orientation="Horizontal">
-				<Button Name="filterBtn" IsVisible="{Binding !RemoveButtonsVisible}" Command="{Binding FilterBtn}" CommandParameter="{Binding #filterSearchTb.Text}" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="Filter"/>
-
 				<!-- Text size on top, row height below. Bound to the single-factor commands,
 				     NOT to IncreaseGridFontSize/DecreaseGridFontSize, which step both factors
 				     and made the A and R rows behave identically. A and R are fully decoupled:
