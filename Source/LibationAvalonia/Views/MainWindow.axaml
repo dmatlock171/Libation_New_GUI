@@ -409,23 +409,26 @@
 				</Style>
 			</Grid.Styles>
 				
+			<!-- Search syntax help. Lists every searchable field, which now includes
+			     includeduntil/Expires, so it is the only place that documents them. -->
 			<StackPanel Grid.Column="0" IsVisible="{Binding !RemoveButtonsVisible}" Orientation="Horizontal">
-				<Button Name="filterHelpBtn" Margin="0" Command="{Binding FilterHelpBtn}" Content="?"/>
-				<Button Name="addQuickFilterBtn" Command="{Binding AddQuickFilterBtn}" Content="Add To Quick Filters"/>
+				<Button Name="filterHelpBtn" Margin="0" Command="{Binding FilterHelpBtn}" Content="?" ToolTip.Tip="Filter options: the fields you can search and how to combine them" />
 			</StackPanel>
 
 			<StackPanel Grid.Column="1" Orientation="Horizontal">
 				<Button IsVisible="{Binding RemoveButtonsVisible}" IsEnabled="{Binding RemoveBooksButtonEnabled}" Command="{Binding RemoveBooksBtn}" Content="{Binding RemoveBooksButtonText}"/>
 				<Button IsVisible="{Binding RemoveButtonsVisible}" Command="{Binding DoneRemovingBtn}" Content="Done Removing Books"/>
 			</StackPanel>
-				
+
+			<!-- Stretches instead of the old fixed 620 cap. Column 1 is the star column and
+			     the filter string is the longest thing anyone types here: the At Risk query
+			     alone ran off the end of the old box. -->
 			<Grid
 				Grid.Column="1"
-				Margin="10,0,0,0"
-				MaxWidth="620"
-				HorizontalAlignment="Left"
+				Margin="10,0,10,0"
+				HorizontalAlignment="Stretch"
 				VerticalAlignment="Center"
-				ColumnDefinitions="*,Auto"
+				ColumnDefinitions="*,Auto,Auto"
 				IsVisible="{Binding !RemoveButtonsVisible}">
 				<TextBox
 					Grid.Column="0"
@@ -446,6 +449,17 @@
 					Click="ClearFilterButton_Click"
 					Content="CLEAR"
 					ToolTip.Tip="Clear filter" />
+				<!-- Next to CLEAR because both act on whatever is currently in the box. -->
+				<Button
+					Grid.Column="2"
+					Name="addQuickFilterBtn"
+					Margin="6,0,0,0"
+					Padding="10,2"
+					Height="28"
+					VerticalContentAlignment="Center"
+					Command="{Binding AddQuickFilterBtn}"
+					Content="Add To Quick Filters"
+					ToolTip.Tip="Save what is in the box as a quick filter, and put it on the ribbon" />
 			</Grid>
 
 			<StackPanel Grid.Column="2" Orientation="Horizontal">
