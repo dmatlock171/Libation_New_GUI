@@ -29,7 +29,7 @@
 				<TabItem.Header>
 					<TextBlock FontSize="14" VerticalAlignment="Center">Process Queue</TextBlock>
 				</TabItem.Header>
-				<Grid ColumnDefinitions="*" RowDefinitions="*,40">
+				<Grid ColumnDefinitions="*" RowDefinitions="*,Auto">
 					<Border Grid.Column="0" Grid.Row="0" BorderThickness="1" BorderBrush="{DynamicResource SystemBaseMediumColor}" Background="{DynamicResource SystemRegionColor}">
 						<ScrollViewer
 							Name="scroller"
@@ -50,53 +50,94 @@
 							</ItemsControl>
 						</ScrollViewer>
 					</Border>
-					<Grid Grid.Column="0" Grid.Row="1" ColumnDefinitions="*,Auto,Auto,Auto">
-						<Button Name="cancelAllBtn" Grid.Column="0" FontSize="12" HorizontalAlignment="Left" Click="CancelAllBtn_Click">Cancel All</Button>
-						<StackPanel Orientation="Horizontal" Grid.Column="1" Margin="0,0,10,0" VerticalAlignment="Center">
-							<CheckBox
-								FontSize="12"
-								Margin="0,0,10,0"
-								VerticalAlignment="Center"
-								IsChecked="{Binding AutoScrollQueue, Mode=TwoWay}"
-								ToolTip.Tip="Keep active downloads scrolled into view."
-								Content="Auto-scroll" />
-							<TextBlock Margin="0,0,6,0" FontSize="11" Text="At&#xA;once" VerticalAlignment="Center" />
-							<NumericUpDown
-								Classes="SmallNumericUpDown"
-								MinWidth="90"
-								FontSize="12"
-								HorizontalContentAlignment="Center"
-								VerticalContentAlignment="Center"
-								Height="{Binding #cancelAllBtn.DesiredSize.Height}"
-								ToolTip.Tip="How many books to download and decrypt at the same time. 1 downloads one at a time."
-								Value="{Binding MaxConcurrentDownloads, Mode=TwoWay}"
-								Minimum="{Binding MinConcurrentDownloads}"
-								Maximum="{Binding MaxAllowedConcurrentDownloads}"
-								Increment="1"
-								FormatString="0" />
-						</StackPanel>
-						<StackPanel Orientation="Horizontal" Grid.Column="2" Margin="0,0,10,0" >
-							<StackPanel.Styles>
-								<Style Selector="NumericUpDown#PART_Spinner">
-									<Setter Property="Background" Value="Black"/>
-								</Style>
-							</StackPanel.Styles>
-							<TextBlock Margin="0,0,6,0" FontSize="11" Text="DL&#xA;Limit" VerticalAlignment="Center" />
-							<NumericUpDown
-								Classes="SmallNumericUpDown"
-								MinWidth="100"
-								FontSize="12"
-								HorizontalContentAlignment="Center"
-								VerticalContentAlignment="Center"
-								TextConverter="{StaticResource myConverter}"
-								Height="{Binding #cancelAllBtn.DesiredSize.Height}"
-								Value="{Binding SpeedLimit, Mode=TwoWay}"
-								Minimum="0"
-								KeyDown="NumericUpDown_KeyDown"
-								Increment="{Binding SpeedLimitIncrement}"
-								Maximum="999" />
-						</StackPanel>
-						<Button Grid.Column="3" FontSize="12" HorizontalAlignment="Right" Click="ClearFinishedBtn_Click">Clear Finished</Button>
+					<!-- Two rows instead of one: the four groups need ~560px side by side, which
+					     overflowed the queue pane and pushed "Clear Finished" off the right edge.
+					     Stacking the buttons in col 0 and the two spinners in cols 3/4 halves the
+					     width needed. Col 2 is the star spacer, so nothing gets crushed when the
+					     pane is dragged narrow. Labels share col 3 (right-aligned) and the spinners
+					     share col 4, so "At once" and "DL Limit" line up on both edges. -->
+					<Grid
+						Grid.Column="0" Grid.Row="1"
+						Margin="0,4,0,4"
+						ColumnDefinitions="Auto,Auto,*,Auto,Auto"
+						RowDefinitions="Auto,Auto">
+						<Grid.Styles>
+							<Style Selector="NumericUpDown#PART_Spinner">
+								<Setter Property="Background" Value="Black"/>
+							</Style>
+						</Grid.Styles>
+
+						<Button
+							Name="cancelAllBtn"
+							Grid.Column="0" Grid.Row="0"
+							FontSize="12"
+							HorizontalAlignment="Stretch"
+							HorizontalContentAlignment="Center"
+							VerticalAlignment="Center"
+							Margin="0,0,10,4"
+							Click="CancelAllBtn_Click">Cancel All</Button>
+						<Button
+							Grid.Column="0" Grid.Row="1"
+							FontSize="12"
+							HorizontalAlignment="Stretch"
+							HorizontalContentAlignment="Center"
+							VerticalAlignment="Center"
+							Margin="0,0,10,0"
+							Click="ClearFinishedBtn_Click">Clear Finished</Button>
+
+						<CheckBox
+							Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
+							FontSize="12"
+							Margin="0,0,10,0"
+							VerticalAlignment="Center"
+							IsChecked="{Binding AutoScrollQueue, Mode=TwoWay}"
+							ToolTip.Tip="Keep active downloads scrolled into view."
+							Content="Auto-scroll" />
+
+						<TextBlock
+							Grid.Column="3" Grid.Row="0"
+							Margin="0,0,6,4"
+							FontSize="11"
+							Text="At once"
+							HorizontalAlignment="Right"
+							VerticalAlignment="Center" />
+						<NumericUpDown
+							Grid.Column="4" Grid.Row="0"
+							Classes="SmallNumericUpDown"
+							MinWidth="77"
+							Margin="0,0,0,4"
+							FontSize="12"
+							HorizontalContentAlignment="Center"
+							VerticalContentAlignment="Center"
+							Height="{Binding #cancelAllBtn.DesiredSize.Height}"
+							ToolTip.Tip="How many books to download and decrypt at the same time. 1 downloads one at a time."
+							Value="{Binding MaxConcurrentDownloads, Mode=TwoWay}"
+							Minimum="{Binding MinConcurrentDownloads}"
+							Maximum="{Binding MaxAllowedConcurrentDownloads}"
+							Increment="1"
+							FormatString="0" />
+
+						<TextBlock
+							Grid.Column="3" Grid.Row="1"
+							Margin="0,0,6,0"
+							FontSize="11"
+							Text="DL Limit"
+							HorizontalAlignment="Right"
+							VerticalAlignment="Center" />
+						<NumericUpDown
+							Grid.Column="4" Grid.Row="1"
+							Classes="SmallNumericUpDown"
+							MinWidth="77"
+							FontSize="12"
+							HorizontalContentAlignment="Center"
+							VerticalContentAlignment="Center"
+							TextConverter="{StaticResource myConverter}"
+							Height="{Binding #cancelAllBtn.DesiredSize.Height}"
+							Value="{Binding SpeedLimit, Mode=TwoWay}"
+							Minimum="0"
+							KeyDown="NumericUpDown_KeyDown"
+							Increment="{Binding SpeedLimitIncrement}"
+							Maximum="999" />
 					</Grid>
 				</Grid>
 			</TabItem>
@@ -105,7 +146,7 @@
 				<TabItem.Header>
 					<TextBlock FontSize="14" VerticalAlignment="Center">Queue Log</TextBlock>
 				</TabItem.Header>
-				<Grid ColumnDefinitions="*" RowDefinitions="*,40">
+				<Grid ColumnDefinitions="*" RowDefinitions="*,Auto">
 					<Border Grid.Column="0" Grid.Row="0" BorderThickness="1" BorderBrush="{DynamicResource SystemBaseMediumColor}" Background="{DynamicResource SystemRegionColor}">
 						<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding LogEntries}">
 							<DataGrid.Columns>
@@ -122,10 +163,11 @@
 							</DataGrid.Columns>
 						</DataGrid>
 					</Border>
-					<Grid Grid.Column="0" Grid.Row="1" ColumnDefinitions="*,Auto">
-						<Button Grid.Column="0" FontSize="12" HorizontalAlignment="Left" Click="LogCopyBtn_Click">Copy Log Entries to Clipboard</Button>
-						<Button Grid.Column="1" FontSize="12" HorizontalAlignment="Right" Click="ClearLogBtn_Click">Clear Log</Button>
-					</Grid>
+					<!-- Wraps for the same reason as the queue tab's bottom bar. -->
+					<WrapPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Margin="0,4,0,4">
+						<Button FontSize="12" Margin="0,2,10,2" Click="LogCopyBtn_Click">Copy Log Entries to Clipboard</Button>
+						<Button FontSize="12" Margin="0,2,0,2" Click="ClearLogBtn_Click">Clear Log</Button>
+					</WrapPanel>
 				</Grid>
 			</TabItem>
 		</TabControl>
