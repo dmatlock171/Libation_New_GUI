@@ -485,6 +485,11 @@
 						ToolTip.Tip="Save what is in the box as a quick filter, and put it on the ribbon" />
 				</Grid>
 
+
+
+
+				</Grid>
+
 				<StackPanel Grid.Column="2" Orientation="Horizontal">
 					<!-- Text size on top, row height below. Bound to the single-factor commands,
 					     NOT to IncreaseGridFontSize/DecreaseGridFontSize, which step both factors
@@ -637,9 +642,6 @@
 						</Path>
 					</Button>
 				</StackPanel>
-
-
-				</Grid>
 			</Grid>
 		</Border>
 		
